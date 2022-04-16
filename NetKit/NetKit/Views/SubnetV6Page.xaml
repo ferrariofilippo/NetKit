@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NetKit.Views.SubnetV6Page"
+             Title="IPv6 - Subnet Calculator"
+             BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}">
+    <ContentPage.Content>
+        <StackLayout Padding="40, 20, 40, 40" 
+                     VerticalOptions="Start">
+            <Entry x:Name="baseAddressEntry"
+                   Placeholder="Base Address: "
+                   MaxLength="39"/>
+            <Entry x:Name="globalPrefixEntry"
+                   Placeholder="Global Routing Prefix: "
+                   MaxLength="3"/>
+            <Entry x:Name="subnetEntry"
+                   Placeholder="Subnet ID: "
+                   MaxLength="3"/>
+            <Entry x:Name="howManyEntry"
+                   Placeholder="How many subnets: "
+                   MaxLength="39"/>
+            <Button Text="Calcola"
+                    Clicked="CalcolaClicked"/>
+
+            <Line/>
+
+            <ListView x:Name="subnetListView"
+                      SelectionMode="None">
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

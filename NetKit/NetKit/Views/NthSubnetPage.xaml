@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NetKit.Views.NthSubnetPage"
+             Title="IPv4 - Find Subnet"
+             BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}">
+    <ContentPage.Content>
+        <StackLayout Padding="30, 30, 30, 30" Spacing="30">
+            <Entry Placeholder="Inserisci la subnet mask"
+                   MaxLength="15"
+                   x:Name="maskEntry"/>
+            <Entry Placeholder="Subnet n°:"
+                   MaxLength="9"
+                   x:Name="valueEntry"/>
+            <Button Clicked="GetResults_Clicked"
+                    Text="Calcola"
+                    CornerRadius="25"
+                    x:Name="getResultsButton"/>
+            <Line/>
+            <Label x:Name="outputLabel"
+                   Padding="0, 0, 0, 30"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

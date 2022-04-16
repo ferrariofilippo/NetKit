@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Shell xmlns="http://xamarin.com/schemas/2014/forms" 
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:local="clr-namespace:NetKit.Views"
+       Title="NetKit"
+       x:Class="NetKit.AppShell">
+    <Shell.Resources>
+        <ResourceDictionary>
+            <Style x:Key="BaseStyle" TargetType="Element">
+                <Setter Property="Shell.BackgroundColor" Value="{StaticResource Primary}" />
+                <Setter Property="Shell.ForegroundColor" Value="{AppThemeBinding Light=#White, Dark=#424242}" />
+                <Setter Property="Shell.TitleColor" Value="White" />
+                <Setter Property="Shell.DisabledColor" Value="#B4FFFFFF"/>
+                <Setter Property="Shell.UnselectedColor" Value="{AppThemeBinding Light=#95FFFFFF, Dark=#424242}" />
+                <Setter Property="Shell.TabBarBackgroundColor" Value="{StaticResource Primary}" />
+                <Setter Property="Shell.TabBarForegroundColor" Value="{AppThemeBinding Light=White, Dark=#424242}"/>
+                <Setter Property="Shell.TabBarUnselectedColor" Value="{AppThemeBinding Light=#95FFFFFF, Dark=#424242}"/>
+                <Setter Property="Shell.TabBarTitleColor" Value="White"/>
+            </Style>
+            <Style TargetType="TabBar" BasedOn="{StaticResource BaseStyle}" />
+            <Style TargetType="FlyoutItem" BasedOn="{StaticResource BaseStyle}" />
+
+            <Style Class="FlyoutItemLabelStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="White"></Setter>
+            </Style>
+            <Style Class="FlyoutItemLayoutStyle" TargetType="Layout" ApplyToDerivedTypes="True">
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal">
+                                <VisualState.Setters>
+                                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=White, Dark=#424242}"/>
+                                    <Setter TargetName="FlyoutItemLabel" Property="Label.TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Light}}" />
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Selected">
+                                <VisualState.Setters>
+                                    <Setter Property="BackgroundColor" Value="{StaticResource Primary}"/>
+                                    <Setter TargetName="FlyoutItemLabel" Property="Label.TextColor" Value="White"/>
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </Shell.Resources>
+    
+    <Shell.FlyoutBackgroundColor>
+        <AppThemeBinding>
+            <AppThemeBinding.Light>
+                <Color>White</Color>
+            </AppThemeBinding.Light>
+            <AppThemeBinding.Dark>
+                <Color>#424242</Color>
+            </AppThemeBinding.Dark>
+        </AppThemeBinding>
+    </Shell.FlyoutBackgroundColor>
+
+    <FlyoutItem Title="IPv4 - VLSM" Icon="{AppThemeBinding Light=Broadcast.png, Dark=WhiteBroadcast.png}">
+        <ShellContent Route="VLSMPage" ContentTemplate="{DataTemplate local:VLSMPage}" />
+    </FlyoutItem>
+    <FlyoutItem Title="IPv4 - Find Subnet" Icon="{AppThemeBinding Light=Router.png, Dark=WhiteRouter.png}">
+        <ShellContent Route="NthSubnetPage" ContentTemplate="{DataTemplate local:NthSubnetPage}" />
+    </FlyoutItem>
+    <FlyoutItem Title="IPv4 - Get Network" Icon="{AppThemeBinding Light=Network.png, Dark=WhiteNetwork.png}">
+        <ShellContent Route="GetNetworkPage" ContentTemplate="{DataTemplate local:GetNetworkPage}"/>
+    </FlyoutItem>
+    <FlyoutItem Title="IPv6 - Compress" Icon="{AppThemeBinding Light=Compress.png, Dark=WhiteCompress.png}">
+        <ShellContent Route="CompressPage" ContentTemplate="{DataTemplate local:CompressPage}"/>
+    </FlyoutItem>
+    <FlyoutItem Title="IPv6 - Subnet" Icon="{AppThemeBinding Light=IPv6.png, Dark=WhiteIPv6.png}">
+        <ShellContent Route="SubnetV6" ContentTemplate="{DataTemplate local:SubnetV6Page}"/>
+    </FlyoutItem>
+    <FlyoutItem Title="About">
+        <ShellContent Route="AboutPage" ContentTemplate="{DataTemplate local:AboutPage}"/>
+    </FlyoutItem>
+</Shell>

@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NetKit.Views.GetNetworkPage"
+             Title="IPv4 - Get Network"
+             BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}">
+    <ContentPage.Content>
+        <StackLayout Padding="30, 30, 30, 30" 
+                     Spacing="20">
+            <Entry x:Name="hostEntry"
+                   Placeholder="Inserisci l'indirizzo dell'host"/>
+            <Entry x:Name="maskEntry"
+                   Placeholder="Inserisci la subnet mask o il prefix length"/>
+            <Button Clicked="Calcola"
+                    Text="Calcola"
+                    CornerRadius="25"
+                    x:Name="getNetworkButton"/>
+            <Line/>
+            <Label x:Name="outputLabel"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
