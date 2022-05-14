@@ -20,27 +20,28 @@ namespace NetKit.Views
 
         async void CalcolaClicked(object sender, EventArgs e)
         {
-            compressButton.IsEnabled = false;
-            await Task.Run(() =>
+            if (!IsAddressValid())
             {
-                if (!IsAddressValid())
-                {
-                    DisplayAlert("Errore", "L'indirizzo inserito non è valido", "OK");
-                    return;
-                }
-                outputLabel.Text = Comprimi(address, len, isSegmentO);
-            });
-            compressButton.IsEnabled = true;
+                await DisplayAlert("Errore", "L'indirizzo inserito non è valido", "OK");
+                return;
+            }
+            outputLabel.Text = await Task.Run(() => Comprimi(address, len, isSegmentO));
         }
 
         static string OmitLeading(string segment, byte index, bool[] isSegmentO)
         {
             if (!segment[0].Equals('0'))
+            {
                 return segment;
+            }
+
             if (segment.Length == 1)
             {
                 if (segment[0].Equals('0'))
+                {
                     isSegmentO[index] = true;
+                }
+
                 return segment;
             }
             return OmitLeading(segment.Substring(1), index, isSegmentO);
@@ -53,9 +54,13 @@ namespace NetKit.Views
             for (byte i = 0; i < len; i++)
             {
                 if (!address[i].Equals(""))
+                {
                     address[i] = OmitLeading(address[i], i, isSegmentO);
+                }
                 else
+                {
                     address[i] = "0";
+                }
             }
             for (byte i = 0; i < len; i++)
             {
@@ -83,17 +88,26 @@ namespace NetKit.Views
                 if (address[i].Equals(""))
                 {
                     if (i == 0)
+                    {
                         output.Append("::");
+                    }
                     else
+                    {
                         output.Append(":");
+                    }
+
                     if (param[1] != 0)
+                    {
                         i += (byte)(param[1] - 1);
+                    }
                 }
                 else
                 {
                     output.Append(address[i]);
                     if (i != 7)
+                    {
                         output.Append(":");
+                    }
                 }
             }
             return output.ToString();
@@ -102,14 +116,23 @@ namespace NetKit.Views
         bool IsAddressValid()
         {
             if (ipEntry.Text == null)
+            {
                 return false;
+            }
+
             string value = ipEntry.Text.ToUpper();
             if (!IsHex(value))
+            {
                 return false;
+            }
+
             address = value.Split(':');
             len = (byte)address.Length;
             if (len != 8)
+            {
                 return false;
+            }
+
             return true;
         }
 
@@ -118,7 +141,9 @@ namespace NetKit.Views
             foreach (var c in value)
             {
                 if ((c < 48 || c > 57) && (c < 65 || c > 70) && c != 58)
+                {
                     return false;
+                }
             }
             return true;
         }

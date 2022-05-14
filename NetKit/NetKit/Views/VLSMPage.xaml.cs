@@ -1,10 +1,10 @@
-﻿using System;
+﻿using NetKit.Model;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using NetKit.Model;
 
 namespace NetKit.Views
 {
@@ -24,11 +24,14 @@ namespace NetKit.Views
         public VLSMPage()
         {
             InitializeComponent();
-            Get_MaxValues();
+
+            Task t = Task.Run(() => Get_MaxValues());
             hostsListView.ItemsSource = addedItems;
             outputListView.ItemsSource = networks;
             outputListView.HeightRequest = 10;
             Add_Clicked(null, EventArgs.Empty);
+
+            t.Wait();
         }
 
         /// <summary>
@@ -63,10 +66,9 @@ namespace NetKit.Views
 
         async void GetResults_Clicked(object sender, EventArgs e)
         {
-            vlsmButton.IsEnabled = false;
-            await Task.Run(() =>
+            try
             {
-                try
+                await Task.Run(() =>
                 {
                     values = Get_Values();
                     len = values.Count;
@@ -74,24 +76,23 @@ namespace NetKit.Views
                     Get_Subnets();
                     Get_Networks();
                     Get_Broadcast();
-                    outputListView.HeightRequest = 30 + outputListView.RowHeight * reti.Count;
-                    networks.Clear();
-                    foreach (var item in reti)
-                    {
-                        networks.Add(item);
-                    }
-                    reti.Clear();
-                    for (int i = 0; i < 4; i++)
-                    {
-                        lastUsed[i] = 0;
-                    }
-                }
-                catch (Exception)
+                });
+                outputListView.HeightRequest = 30 + outputListView.RowHeight * reti.Count;
+                networks.Clear();
+                foreach (var item in reti)
                 {
-                    DisplayAlert("Errore", "I dati inseriti non sono nel formato corretto!", "OK");
+                    networks.Add(item);
                 }
-            });
-            vlsmButton.IsEnabled = true;
+                reti.Clear();
+                for (int i = 0; i < 4; i++)
+                {
+                    lastUsed[i] = 0;
+                }
+            }
+            catch (Exception)
+            {
+                await DisplayAlert("Errore", "I dati inseriti non sono nel formato corretto!", "OK");
+            }
         }
 
         /// <summary>
@@ -104,9 +105,13 @@ namespace NetKit.Views
             foreach (var item in addedItems)
             {
                 if (item.Data.StartsWith("/") || item.Data.StartsWith("\\"))    // Calcola Rete dato il Prefix Length
+                {
                     data.Add(GetSize(item.Data));
+                }
                 else
+                {
                     data.Add(uint.Parse(item.Data));    // Calcola Rete dato il numero di host
+                }
             }
             return data;
         }
@@ -121,10 +126,12 @@ namespace NetKit.Views
         {
             data = data.Substring(1);   // Rimuovi '/' o '\'
             byte size = byte.Parse(data);
-            size = size % 8 != 0 ? size : (byte)(size - 1);
             sbyte cycles = (sbyte)(30 - size);  // Calcola l'esponente
             if (cycles >= 0)
+            {
                 return maxValues[cycles];
+            }
+
             throw new Exception("Prefix Length non valido");
         }
 
@@ -145,7 +152,9 @@ namespace NetKit.Views
             {
                 byte j = 0;
                 while (values[i] > maxValues[j])
+                {
                     j++;
+                }
 
                 values[i] = maxValues[j];
             }
@@ -156,12 +165,14 @@ namespace NetKit.Views
             {
                 byte prefix = 0;
                 while (maxValues[prefix] < values[i])
+                {
                     prefix++;
+                }
 
                 prefix = (byte)(30 - prefix);
                 reti.Add(new Network()
                 {
-                    PrefixLength = prefix % 8 != 0 ? prefix : (byte)(prefix + 1),
+                    PrefixLength = prefix,
                     NumeroHost = values[i]
                 });
             }
@@ -185,7 +196,9 @@ namespace NetKit.Views
                 for (int k = 0; k < 8; k++)
                 {
                     if (j * 8 + k < prefix)
+                    {
                         mask[j] += (byte)PowerOfTwo(7 - k);
+                    }
                     else
                     {
                         k = 9;
@@ -209,18 +222,29 @@ namespace NetKit.Views
                 lastUsed[1] = 16;
             }
             else if (reti[0].PrefixLength <= 8)
+            {
                 lastUsed[0] = 0;
+            }
+
             for (int i = 0; i < len; i++)
             {
                 reti[i].NetworkAddress = $"{lastUsed[0]}.{lastUsed[1]}.{lastUsed[2]}.{lastUsed[3]}";
                 if (reti[i].PrefixLength > 24)
+                {
                     lastUsed[3] += (byte)PowerOfTwo(32 - reti[i].PrefixLength);
+                }
                 else if (reti[i].PrefixLength > 16)
+                {
                     lastUsed[2] += (byte)PowerOfTwo(24 - reti[i].PrefixLength);
+                }
                 else if (reti[i].PrefixLength > 8)
+                {
                     lastUsed[1] += (byte)PowerOfTwo(16 - reti[i].PrefixLength);
+                }
                 else
+                {
                     lastUsed[0] += (byte)PowerOfTwo(8 - reti[i].PrefixLength);
+                }
             }
         }
 
@@ -241,7 +265,9 @@ namespace NetKit.Views
                     for (int k = 0; k < 8; k++)
                     {
                         if (j * 8 + k < hostBits)
+                        {
                             ip[3 - j] += (byte)PowerOfTwo(k);
+                        }
                         else
                         {
                             k = 9;

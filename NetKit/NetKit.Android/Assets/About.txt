@@ -1,4 +1,4 @@
 ﻿Hope this app is useful to you
 Please report to me any bugs and errors you find
 
-Disclaimer: IPv6 subnet function can manage up to 16 777 216 subnets, more would cause performance issues
+Disclaimer: IPv6 subnet function can manage up to 65 536 subnets, more would cause performance issues
