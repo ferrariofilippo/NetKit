@@ -14,7 +14,7 @@
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <ViewCell>
-                                    <Entry Placeholder="Inserisci il numero di host:"
+                                    <Entry Placeholder="Enter host number:"
                                        Text="{Binding Data}"
                                        MaxLength="9"/>
                                 </ViewCell>
@@ -44,7 +44,7 @@
 
 
                 <Button Clicked="GetResults_Clicked"
-                        Text="Calcola"
+                        Text="Submit"
                         CornerRadius="25"
                         FontAttributes="Bold"
                         FontSize="Subtitle"
@@ -104,7 +104,7 @@
                                            Grid.Column="0"/>
                                     <Label Grid.Row="3"
                                            Grid.Column="1"
-                                           Text="{Binding NumeroHost}"
+                                           Text="{Binding HostNumber}"
                                            HorizontalOptions="CenterAndExpand"/>
                                 </Grid>
                             </ViewCell>

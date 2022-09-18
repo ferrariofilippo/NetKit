@@ -4,20 +4,20 @@
              x:Class="NetKit.Views.SubnetV6Page"
              Title="IPv6 - Subnet Calculator"
              BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}">
-    <ContentPage.Content>
+	<ContentPage.Content>
         <StackLayout Padding="40, 20, 40, 40" 
                      VerticalOptions="Start">
             <Entry x:Name="baseAddressEntry"
                    Placeholder="Base Address: "
                    MaxLength="39"/>
             <Entry x:Name="globalPrefixEntry"
-                   Placeholder="Global Routing Prefix: "
+                   Placeholder="Global Routing Prefix Length (bits): "
                    MaxLength="3"/>
             <Entry x:Name="howManyEntry"
                    Placeholder="How many subnets: "
                    MaxLength="6"/>
-            <Button Text="Calcola"
-                    Clicked="CalcolaClicked"/>
+            <Button Text="Submit"
+                    Clicked="SubmitClicked"/>
 
             <Line/>
 

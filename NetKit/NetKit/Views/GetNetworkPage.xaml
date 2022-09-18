@@ -8,11 +8,11 @@
         <StackLayout Padding="30, 30, 30, 30" 
                      Spacing="20">
             <Entry x:Name="hostEntry"
-                   Placeholder="Inserisci l'indirizzo dell'host"/>
+                   Placeholder="Host Address:"/>
             <Entry x:Name="maskEntry"
-                   Placeholder="Inserisci la subnet mask o il prefix length"/>
-            <Button Clicked="Calcola"
-                    Text="Calcola"
+                   Placeholder="Subnet Mask or Prefix Length:"/>
+            <Button Clicked="Submit"
+                    Text="Submit"
                     CornerRadius="25"
                     x:Name="getNetworkButton"/>
             <Line/>

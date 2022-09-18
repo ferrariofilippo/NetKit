@@ -6,14 +6,14 @@
              BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}">
     <ContentPage.Content>
         <StackLayout Padding="30, 30, 30, 30" Spacing="30">
-            <Entry Placeholder="Inserisci la subnet mask"
+            <Entry Placeholder="Subnet Mask:"
                    MaxLength="15"
                    x:Name="maskEntry"/>
-            <Entry Placeholder="Subnet n°:"
+            <Entry Placeholder="Subnet Number:"
                    MaxLength="9"
                    x:Name="valueEntry"/>
             <Button Clicked="GetResults_Clicked"
-                    Text="Calcola"
+                    Text="Submit"
                     CornerRadius="25"
                     x:Name="getResultsButton"/>
             <Line/>

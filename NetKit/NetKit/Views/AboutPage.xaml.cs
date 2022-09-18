@@ -12,9 +12,7 @@ namespace NetKit.Views
         {
             InitializeComponent();
             if (Device.RuntimePlatform == Device.Android)
-            {
                ReadData();
-            }
         }
 
         async void ReadData()
@@ -22,7 +20,8 @@ namespace NetKit.Views
             using (StreamReader stream = new StreamReader(await FileSystem.OpenAppPackageFileAsync("About.txt")))
             {
                 aboutLabel.Text = stream.ReadToEnd();
-            }        }
+            }        
+        }
 
         private async void LinkTapped(object sender, System.EventArgs e)
         {

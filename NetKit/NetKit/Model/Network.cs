@@ -6,6 +6,6 @@
         public string BroadcastAddress { get; set; }
         public string SubnetMask { get; set; }
         public byte PrefixLength { get; set; }
-        public uint NumeroHost { get; set; }
+        public uint HostNumber { get; set; }
     }
 }

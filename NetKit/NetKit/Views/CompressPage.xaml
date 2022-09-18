@@ -10,7 +10,7 @@
             <Entry x:Name="ipEntry"
                    Placeholder="Enter IP: "/>
             <Button Text="Compress"
-                    Clicked="CalcolaClicked"
+                    Clicked="CompressClicked"
                     x:Name="compressButton"/>
             <Label x:Name="outputLabel"
                    HorizontalOptions="Center"
