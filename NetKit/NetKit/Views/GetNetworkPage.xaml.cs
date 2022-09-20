@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NetKit.Services;
+using System;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -8,17 +9,17 @@ namespace NetKit.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class GetNetworkPage : ContentPage
     {
-        readonly byte[] network = new byte[4];
-        readonly byte[] host = new byte[4];
-        byte[] mask = new byte[4];
-        byte prefixLength;
+        private readonly byte[] network = new byte[4];
+        private readonly byte[] host = new byte[4];
+        private byte[] mask = new byte[4];
+        private byte prefixLength;
 
         public GetNetworkPage()
         {
             InitializeComponent();
         }
 
-        async void Submit(object sender, EventArgs e)
+        private async void Submit(object sender, EventArgs e)
         {
             if (!await Task.Run(() => GetHost()))
             {
@@ -34,10 +35,10 @@ namespace NetKit.Views
                 $".{network[2]}.{network[3]}";
         }
 
-        bool GetHost()
+        private bool GetHost()
         {
             string value = hostEntry.Text;
-            if (value == null)
+            if (string.IsNullOrWhiteSpace(value))
                 return false;
 
             string[] fields = value.Split('.');
@@ -52,10 +53,10 @@ namespace NetKit.Views
             return true;
         }
 
-        bool Get_Network()
+        private bool Get_Network()
         {
             string value = maskEntry.Text;
-            if (value == null)
+            if (string.IsNullOrWhiteSpace(value))
                 return false;
 
             if (value.StartsWith("\\") || value.StartsWith("/"))
@@ -63,7 +64,7 @@ namespace NetKit.Views
                 if (!byte.TryParse(value.Substring(1), out prefixLength))
                     return false;
 
-                mask = VLSMPage.Subnet(prefixLength);
+                mask = IPv4Helpers.GetSubnetMask(prefixLength);
             }
             else
             {

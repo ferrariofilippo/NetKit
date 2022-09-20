@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NetKit.Services;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
@@ -11,18 +12,15 @@ namespace NetKit.Views
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class SubnetV6Page : ContentPage
 	{
-		readonly string[] baseAddress = new string[8];
-		byte globalRoutingPrefix = 0;
-		byte subnetId = 0;
-		ushort howMany = 0;
+		private string[] baseAddress;
+		private byte globalRoutingPrefix = 0;
+		private byte subnetId = 0;
+		private Task processData = Task.CompletedTask;
+		private CancellationTokenSource tokenSource = new CancellationTokenSource();
+		private CancellationToken token;
+		private readonly SemaphoreSlim semaphore = new SemaphoreSlim(0);
 
 		public readonly ObservableCollection<string> Addresses = new ObservableCollection<string>();
-
-		readonly SemaphoreSlim semaphore = new SemaphoreSlim(0);
-		Task processData = new Task(() => { });
-		CancellationTokenSource tokenSource = new CancellationTokenSource();
-		CancellationToken token;
-
 
 		public SubnetV6Page()
 		{
@@ -31,7 +29,7 @@ namespace NetKit.Views
 			subnetListView.ItemsSource = Addresses;
 		}
 
-		void SubmitClicked(object sender, EventArgs e)
+		private void SubmitClicked(object sender, EventArgs e)
 		{
 			try
 			{
@@ -53,7 +51,7 @@ namespace NetKit.Views
 					return;
 				}
 
-				howMany = ushort.Parse(howManyEntry.Text);
+				ushort howMany = ushort.Parse(howManyEntry.Text);
 				byte index = (byte)((globalRoutingPrefix + subnetId) / 16 - 1);
 				string lastDigit = $"{baseAddress[index].Last()}";
 				byte baseValue = byte.Parse(lastDigit,
@@ -61,7 +59,7 @@ namespace NetKit.Views
 
 				if (howMany > (1 << subnetId - baseValue))
 				{
-					DisplayError("Subnet Id is too small for this many subnets");
+					DisplayError("Subnet Id is too small for these many subnets");
 					return;
 				}
 				else if (howMany > short.MaxValue)
@@ -78,7 +76,7 @@ namespace NetKit.Views
 			}
 		}
 
-		bool GetBaseAddress()
+		private bool GetBaseAddress()
 		{
 			if (string.IsNullOrWhiteSpace(baseAddressEntry.Text))
 			{
@@ -86,51 +84,36 @@ namespace NetKit.Views
 				return false;
 			}
 
-			foreach (var c in baseAddressEntry.Text.ToUpper())
+			baseAddressEntry.Text = baseAddressEntry.Text.Trim();
+
+			if (!IPv6Helpers.IsHex(baseAddressEntry.Text.ToUpper()))
 			{
-				if ((c < 48 || c > 57) && (c < 65 || c > 90) && c != ':')
-				{
-					DisplayError("Base Address must be Hex");
-					return false;
-				}
+				DisplayError("Base Address must be Hex");
+				return false;
 			}
 
-			string[] address;
-			baseAddressEntry.Text = baseAddressEntry.Text.Trim();
 			if (baseAddressEntry.Text.EndsWith("::"))
 			{
-				address = baseAddressEntry.Text.Remove(baseAddressEntry.Text.LastIndexOf(":")).Split(':');
+				baseAddress = IPv6Helpers.Expand(baseAddressEntry.Text.Remove(baseAddressEntry.Text.Length - 1).Split(':'));
 			}
 			else
 			{
-				address = baseAddressEntry.Text.Split(':');
-				if (address.Length != 8)
+				if (baseAddressEntry.Text.Contains("::"))
+					baseAddress = IPv6Helpers.Expand(baseAddressEntry.Text.Split(':'));
+				else
+					baseAddress = baseAddressEntry.Text.Split(':');
+
+				if (baseAddress.Length != 8)
 				{
 					DisplayError("Base address in not in the correct format!");
 					return false;
 				}
 			}
 
-			byte len = (byte)address.Length;
-			for (byte i = 0, j = 0; i < len; i++)
-			{
-				if (address[i] != "")
-				{
-					baseAddress[j] = address[i];
-					j++;
-				}
-				else
-				{
-					byte n = (byte)(9 - len);
-					for (byte k = 0; k < n; k++)
-						baseAddress[j + k] = "0";
-					j += n;
-				}
-			}
 			return true;
 		}
 
-		string GetFormattedAddress(uint value, byte index)
+		private string GetFormattedAddress(uint value, byte index)
 		{
 			string[] temp = new string[8];
 			for (byte i = 0; i < 8; i++)
@@ -141,10 +124,10 @@ namespace NetKit.Views
 					temp[i] = Convert.ToString(value, 16);
 			}
 
-			return CompressPage.CompressIP(temp, 8, new bool[8]);
+			return IPv6Helpers.Compress(ref temp, 8);
 		}
 
-		async Task Submit(uint howMany)
+		private async Task Submit(ushort howMany)
 		{
 			try
 			{
@@ -161,11 +144,10 @@ namespace NetKit.Views
 					ushort address = ushort.Parse(baseAddress[index],
 						System.Globalization.NumberStyles.HexNumber);
 					Addresses.Clear();
-					for (ushort i = 0; i < howMany; i++)
+					for (ushort i = 0; i < howMany; i++, address++)
 					{
 						token.ThrowIfCancellationRequested();
 						Addresses.Add(GetFormattedAddress(address, index));
-						address++;
 					}
 					token.ThrowIfCancellationRequested();
 				}, token);
@@ -182,7 +164,7 @@ namespace NetKit.Views
 			}
 		}
 
-		void DisplayError(string error)
+		private void DisplayError(string error)
 		{
 			DisplayAlert("Error", error, "OK");
 		}

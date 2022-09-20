@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NetKit.Services;
+using System;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -8,18 +9,18 @@ namespace NetKit.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NthSubnetPage : ContentPage
     {
-        byte value;
-        readonly byte[] subnet = new byte[4];
-        readonly byte[] address = { 0, 0, 0, 0 };
+        private byte value;
+        private readonly byte[] subnet = new byte[4];
+        private readonly byte[] address = { 0, 0, 0, 0 };
 
         public NthSubnetPage()
         {
             InitializeComponent();
         }
 
-        async void GetResults_Clicked(object sender, EventArgs e)
+        private async void GetResults_Clicked(object sender, EventArgs e)
         {
-            if (maskEntry.Text == null || !IsSubnetValid())
+            if (maskEntry.Text == null || !IPv4Helpers.ValidateSubnetMask(subnet, maskEntry.Text.Split('.')))
             {
                 await DisplayAlert("Error", "Entered Subnet Mask is not valid!", "OK");
                 return;
@@ -32,26 +33,7 @@ namespace NetKit.Views
             outputLabel.Text = $"Subnet Address: {address[0]}.{address[1]}.{address[2]}.{address[3]}";
         }
 
-        bool IsSubnetValid()
-        {
-            string[] fields = maskEntry.Text.Split('.');
-            int len = fields.Length;
-            if (len != 4)
-                return false;
-
-            try
-            {
-                for (int i = 0; i < len; i++)
-                    subnet[i] = byte.Parse(fields[i]);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        bool IsValueValid()
+        private bool IsValueValid()
         {
             if (!byte.TryParse(valueEntry.Text, out value) || value <= 0)
                 return false;
@@ -75,10 +57,10 @@ namespace NetKit.Views
                         address[1] = 168;
                     }
                     byte lastOne = (byte)(7 - Convert.ToString(subnet[i], 2).LastIndexOf('1'));
-                    if (value > VLSMPage.PowerOfTwo(8 - lastOne))
+                    if (value > MathHelpers.PowerOfTwo(8 - lastOne))
                         return false;
 
-                    byte magicNumber = (byte)(VLSMPage.PowerOfTwo(lastOne) * (value - 1));
+                    byte magicNumber = (byte)(MathHelpers.PowerOfTwo(lastOne) * (value - 1));
                     address[i] = magicNumber;
                     return true;
                 }
