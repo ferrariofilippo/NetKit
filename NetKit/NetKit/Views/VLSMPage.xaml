@@ -4,114 +4,130 @@
              x:Class="NetKit.Views.VLSMPage"
              Title="IPv4 - VLSM"
              BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}">
-    <ContentPage.Content>
-        <ScrollView Padding="40, 20, 40, 40" VerticalOptions="Start">
-            <StackLayout  Spacing="30">
-                <StackLayout VerticalOptions="Start">
-                    <ListView x:Name="hostsListView" 
-                          RowHeight="40"
-                          SeparatorVisibility="None">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <ViewCell>
-                                    <Entry Placeholder="Enter host number:"
-                                       Text="{Binding Data}"
-                                       MaxLength="9"/>
-                                </ViewCell>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+	<ContentPage.Content>
+		<ScrollView
+			Padding="40, 20, 40, 40"
+			VerticalOptions="Start">
+			<StackLayout Spacing="20">
+				<StackLayout VerticalOptions="Start">
+					<ListView
+						x:Name="hostsListView" 
+                        RowHeight="40"
+                        SeparatorVisibility="None">
+						<ListView.ItemTemplate>
+							<DataTemplate>
+								<ViewCell>
+									<Entry
+										Placeholder="Enter host number:"
+										Text="{Binding Data}"
+										MaxLength="9"/>
+								</ViewCell>
+							</DataTemplate>
+						</ListView.ItemTemplate>
+					</ListView>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
 
-                        <ImageButton Clicked="Add_Clicked" 
-                                 Source="{AppThemeBinding Light=Add.png, Dark=WhiteAdd.png}"
-                                 BackgroundColor="Transparent"
-                                 HorizontalOptions="Center"
-                                 Grid.Column="0"
-                                 HeightRequest="30"/>
-                        <ImageButton Clicked="Delete_Clicked"
-                                 Source="{AppThemeBinding Light=Delete.png, Dark=WhiteDelete.png}"
-                                 BackgroundColor="Transparent"
-                                 HorizontalOptions="Center"
-                                 Grid.Column="1"
-                                 HeightRequest="30"/>
-                    </Grid>
-                </StackLayout>
+						<ImageButton
+                            Grid.Column="0"
+                            BackgroundColor="Transparent"
+							Clicked="Add_Clicked" 
+                            HeightRequest="30"
+                            HorizontalOptions="Center"
+                            Source="{AppThemeBinding Light=Add.png, Dark=WhiteAdd.png}" />
+						<ImageButton
+                            Grid.Column="1"
+    						BackgroundColor="Transparent"
+							Clicked="Delete_Clicked"
+                            HeightRequest="30"
+                            HorizontalOptions="Center"
+							Source="{AppThemeBinding Light=Delete.png, Dark=WhiteDelete.png}" />
+					</Grid>
+				</StackLayout>
 
 
-                <Button Clicked="GetResults_Clicked"
-                        Text="Submit"
-                        CornerRadius="25"
-                        FontAttributes="Bold"
-                        FontSize="Subtitle"
-                        x:Name="vlsmButton"/>
+				<Button
+					Clicked="GetResults_Clicked"
+                    CornerRadius="25"
+                    FontAttributes="Bold"
+                    FontSize="Subtitle"
+                    Text="Submit"
+                    x:Name="vlsmButton" />
 
-                <Line/>
+				<Line/>
 
-                <ListView x:Name="outputListView"
-                          SelectionMode="None"
-                          RowHeight="140"
-                          SeparatorColor="#a39a38">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <ViewCell>
-                                <Grid Padding="0, 25, 0, 15">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*"/>
-                                        <RowDefinition Height="*"/>
-                                        <RowDefinition Height="*"/>
-                                        <RowDefinition Height="*"/>
-                                    </Grid.RowDefinitions>
+				<ListView
+					RowHeight="150"
+					SelectionMode="None"
+                    SeparatorColor="#a39a38"
+					x:Name="outputListView">
+					<ListView.ItemTemplate>
+						<DataTemplate>
+							<ViewCell>
+								<Grid Margin="0, 25, 0, 15">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="Auto"/>
+										<ColumnDefinition Width="*"/>
+									</Grid.ColumnDefinitions>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="*"/>
+										<RowDefinition Height="*"/>
+										<RowDefinition Height="*"/>
+										<RowDefinition Height="*"/>
+									</Grid.RowDefinitions>
 
-                                    <Label FontAttributes="Bold"
-                                           Text="Network: "
-                                           Grid.Row="0"
-                                           Grid.Column="0"/>
-                                    <Label Grid.Row="0"
-                                           Grid.Column="1"
-                                           Text="{Binding NetworkAddress}"
-                                           HorizontalOptions="CenterAndExpand"/>
+									<Label
+                                        Grid.Column="0"
+									    Grid.Row="0"
+										FontAttributes="Bold"
+                                        Text="Network: " />
+									<Label 
+                                        Grid.Column="1"
+                                        Grid.Row="0"
+                                        HorizontalOptions="CenterAndExpand"
+                                        Text="{Binding NetworkAddress}" />
 
-                                    <Label FontAttributes="Bold"
-                                           Text="Broadcast: "
-                                           Grid.Row="1"
-                                           Grid.Column="0"/>
-                                    <Label Grid.Row="1"
-                                           Grid.Column="1"
-                                           Text="{Binding BroadcastAddress}"
-                                           HorizontalOptions="CenterAndExpand"/>
+									<Label
+                                        Grid.Column="0"
+                                        Grid.Row="1"
+                                        FontAttributes="Bold"
+                                        Text="Broadcast: " />
+									<Label
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        HorizontalOptions="CenterAndExpand"
+                                        Text="{Binding BroadcastAddress}" />
 
-                                    <Label FontAttributes="Bold"
-                                           Text="Subnet Mask: "
-                                           Grid.Row="2"
-                                           Grid.Column="0"/>
-                                    <Label Grid.Row="2"
-                                           Grid.Column="1"
-                                           Text="{Binding SubnetMask}"
-                                           HorizontalOptions="CenterAndExpand"/>
+									<Label
+                                        Grid.Column="0"
+                                        Grid.Row="2"
+                                        FontAttributes="Bold"
+                                        Text="Subnet Mask: " />
+									<Label
+                                        Grid.Column="1"
+                                        Grid.Row="2"
+                                        HorizontalOptions="CenterAndExpand"
+                                        Text="{Binding SubnetMask}" />
 
-                                    <Label FontAttributes="Bold"
-                                           Text="Numero Host: "
-                                           Grid.Row="3"
-                                           Grid.Column="0"/>
-                                    <Label Grid.Row="3"
-                                           Grid.Column="1"
-                                           Text="{Binding HostNumber}"
-                                           HorizontalOptions="CenterAndExpand"/>
-                                </Grid>
-                            </ViewCell>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </StackLayout>
-        </ScrollView>
-    </ContentPage.Content>
+									<Label
+                                        Grid.Column="0"
+                                        Grid.Row="3"
+                                        FontAttributes="Bold"
+                                        Text="Numero Host: " />
+									<Label
+                                        Grid.Column="1"
+                                        Grid.Row="3"
+                                        HorizontalOptions="CenterAndExpand"
+                                        Text="{Binding HostNumber}" />
+								</Grid>
+							</ViewCell>
+						</DataTemplate>
+					</ListView.ItemTemplate>
+				</ListView>
+			</StackLayout>
+		</ScrollView>
+	</ContentPage.Content>
 </ContentPage>

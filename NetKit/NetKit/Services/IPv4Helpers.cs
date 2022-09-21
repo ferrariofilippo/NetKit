@@ -1,40 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace NetKit.Services
 {
 	public static class IPv4Helpers
 	{
-		public static bool ValidateSubnetMask(byte[] outSubnet, string[] subnetComponents)
-		{
-			if (subnetComponents.Length != 4)
-				return false;
+		readonly public static List<uint> SubnetMaxHosts = new List<uint>();
 
-			try
-			{
-				for (byte i = 0; i < subnetComponents.Length; i++)
-					outSubnet[i] = byte.Parse(subnetComponents[i]);
-			}
-			catch (Exception)
-			{
-				return false;
-			}
-			return true;
+		public static void Init()
+		{
+			GetSubnetMaxHosts();
 		}
 
-		public static void GetSubnetMaxHosts(List<uint> values)
+		public static bool TryGetSubnetMask(byte prefixLength, byte[] mask)
 		{
-			values.Add(4);
-			for (int i = 0; i < 30; i++)
-				values.Add(values[i] << 1);
-			for (int i = 0; i < values.Count; i++)
-				values[i] -= 2;
-		}
-
-		public static byte[] GetSubnetMask(byte prefixLength)
-		{
-			byte[] mask = new byte[4];
+			if (mask.Length != 4)
+				return false;
 			for (int j = 0; j < 4; j++)
 			{
 				for (int k = 0; k < 8; k++)
@@ -42,10 +22,66 @@ namespace NetKit.Services
 					if (j * 8 + k < prefixLength)
 						mask[j] += (byte)MathHelpers.PowerOfTwo(7 - k);
 					else
-						return mask;
+						return true;
 				}
 			}
-			return mask;
+			return true;
+		}
+
+		public static bool TryParseAddress(string addressString, byte[] address)
+		{
+			if (string.IsNullOrWhiteSpace(addressString) || address.Length != 4)
+				return false;
+
+			string[] addressComponents = addressString.Split('.');
+			if (addressComponents.Length != 4)
+				return false;
+
+			for (byte i = 0; i < address.Length; i++)
+			{
+				if (!byte.TryParse(addressComponents[i], out address[i]))
+					return false;
+			}
+
+			return true;
+		}
+
+		public static uint GetMinimumWasteHostSize(byte prefixLength)
+		{
+			sbyte howManyCycles = (sbyte)(30 - prefixLength);
+			if (howManyCycles >= 0)
+				return SubnetMaxHosts[howManyCycles];
+			return 0;
+		}
+
+
+		public static uint GetMinimumWasteHostSize(uint hosts)
+		{
+			byte index = 0;
+			while (index < SubnetMaxHosts.Count && hosts > SubnetMaxHosts[index])
+				index++;
+			if (index >= SubnetMaxHosts.Count)
+				return 0;
+
+			return SubnetMaxHosts[index];
+		}
+
+		public static byte GetPrefixLength(uint hosts)
+		{
+			byte prefix = 0;
+			while (hosts > SubnetMaxHosts[prefix])
+				prefix++;
+			return (byte)(30 - prefix); 
+		}
+
+		private static void GetSubnetMaxHosts()
+		{
+			SubnetMaxHosts.Clear();
+			SubnetMaxHosts.Add(4);
+			for (int i = 0; i < 30; i++)
+				SubnetMaxHosts.Add(SubnetMaxHosts[i] << 1);
+			for (int i = 0; i < SubnetMaxHosts.Count; i++)
+				SubnetMaxHosts[i] -= 2;
 		}
 	}
 }

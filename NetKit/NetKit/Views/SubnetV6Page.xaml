@@ -5,24 +5,30 @@
              Title="IPv6 - Subnet Calculator"
              BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}">
 	<ContentPage.Content>
-        <StackLayout Padding="40, 20, 40, 40" 
-                     VerticalOptions="Start">
-            <Entry x:Name="baseAddressEntry"
-                   Placeholder="Base Address: "
-                   MaxLength="39"/>
-            <Entry x:Name="globalPrefixEntry"
-                   Placeholder="Global Routing Prefix Length (bits): "
-                   MaxLength="3"/>
-            <Entry x:Name="howManyEntry"
-                   Placeholder="How many subnets: "
-                   MaxLength="6"/>
-            <Button Text="Submit"
-                    Clicked="SubmitClicked"/>
+        <StackLayout
+			Padding="40, 20, 40, 40" 
+            VerticalOptions="Start">
+            <Entry
+                MaxLength="39"
+                Placeholder="Base Address: "
+                x:Name="baseAddressEntry" />
+            <Entry
+				Placeholder="Global Routing Prefix Length (bits): "
+                MaxLength="3"
+                x:Name="globalPrefixEntry" />
+            <Entry
+				Placeholder="How many subnets: "
+                MaxLength="6"
+                x:Name="howManyEntry" />
+            <Button
+				Text="Submit"
+                Clicked="SubmitClicked" />
 
-            <Line/>
+            <Line />
 
-            <ListView x:Name="subnetListView"
-                      SelectionMode="None">
+            <ListView 
+				SelectionMode="None"
+				x:Name="subnetListView">
             </ListView>
         </StackLayout>
     </ContentPage.Content>

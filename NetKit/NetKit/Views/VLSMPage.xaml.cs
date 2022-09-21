@@ -15,9 +15,8 @@ namespace NetKit.Views
 	{
 		private readonly ObservableCollection<HostLine> addedItems = new ObservableCollection<HostLine>();
 		private readonly ObservableCollection<Network> networks = new ObservableCollection<Network>();
-		private readonly byte[] lastUsed = { 10, 0, 0, 0 };
+		private readonly byte[] lastSubnet = { 10, 0, 0, 0 };
 		private readonly List<Network> calculatedNetworks = new List<Network>();
-		private readonly List<uint> maxValues = new List<uint>();
 		private List<uint> values;
 		private int height = 30;
 		private int howManySubnets = 0;
@@ -26,13 +25,11 @@ namespace NetKit.Views
 		{
 			InitializeComponent();
 
-			Task t = Task.Run(() => IPv4Helpers.GetSubnetMaxHosts(maxValues));
 			hostsListView.ItemsSource = addedItems;
 			outputListView.ItemsSource = networks;
 			outputListView.HeightRequest = 10;
-			Add_Clicked(null, EventArgs.Empty);
 
-			t.Wait();
+			Add_Clicked(null, null);
 		}
 
 		private void Add_Clicked(object sender, EventArgs e)
@@ -63,10 +60,10 @@ namespace NetKit.Views
 						return;
 
 					howManySubnets = values.Count;
-					GetPrefixes();
-					GetSubnets();
-					GetNetworks();
-					GetBroadcast();
+					SetPrefixes();
+					SetSubnets();
+					SetNetworks();
+					SetBroadcast();
 				});
 				outputListView.HeightRequest = 30 + outputListView.RowHeight * calculatedNetworks.Count;
 				networks.Clear();
@@ -74,8 +71,9 @@ namespace NetKit.Views
 					networks.Add(item);
 
 				calculatedNetworks.Clear();
-				for (int i = 0; i < 4; i++)
-					lastUsed[i] = 0;
+				lastSubnet[0] = 10;
+				for (int i = 1; i < 4; i++)
+					lastSubnet[i] = 0;
 			}
 			catch (Exception)
 			{
@@ -86,122 +84,82 @@ namespace NetKit.Views
 		private List<uint> GetValues()
 		{
 			List<uint> data = new List<uint>();
+			uint size;
 			foreach (var item in addedItems)
 			{
 				if (item.Data.StartsWith("/") || item.Data.StartsWith("\\"))
+					size = IPv4Helpers.GetMinimumWasteHostSize(byte.Parse(item.Data.Substring(1)));
+				else
+					size = IPv4Helpers.GetMinimumWasteHostSize(uint.Parse(item.Data));
+				
+				if (size != 0)
 				{
-					byte prefixLength = byte.Parse(item.Data.Substring(1));  // Get Prefix Length after removing '/' or '\\'
-					if (TryGetMinimumWasteHostSize(prefixLength, out uint size))
-					{
-						data.Add(size);
-					}
-					else
-					{
-						DisplayAlert("Error", "Invalid Prefix Length!", "OK");
-						return null;
-					}
+					data.Add(size);
 				}
 				else
 				{
-					if (TryGetMinimumWasteHostSize(uint.Parse(item.Data), out uint size))
-					{
-						data.Add(size);
-					}
-					else
-					{
-						DisplayAlert("Error", "Too many hosts!", "OK");
-						return null;
-					}
+					DisplayAlert("Error", "Hosts or Prefix Length is not valid", "OK");
+					return null;
 				}
 			}
 			data.OrderByDescending(x=> x);
 			return data;
-		}
+		}	
 
-		private bool TryGetMinimumWasteHostSize(byte prefixLength, out uint size)
-		{
-			size = 0;
-			sbyte howManyCycles = (sbyte)(30 - prefixLength);
-			if (howManyCycles >= 0)
-			{
-				size = maxValues[howManyCycles];
-				return true;
-			}
-			return false;
-		}
-
-		private bool TryGetMinimumWasteHostSize(uint hosts, out uint size)
-		{
-			size = 0;
-			byte index = 0;
-			while (index < maxValues.Count && hosts > maxValues[index])
-				index++;
-			if (index >= maxValues.Count)
-				return false;
-
-			size = maxValues[index];
-			return true;
-		}
-
-		private void GetPrefixes()
+		private void SetPrefixes()
 		{
 			for (int i = 0; i < howManySubnets; i++)
 			{
-				byte prefix = 0;
-				while (maxValues[prefix] < values[i])
-					prefix++;
-
-				prefix = (byte)(30 - prefix);
 				calculatedNetworks.Add(new Network()
 				{
-					PrefixLength = prefix,
+					PrefixLength = IPv4Helpers.GetPrefixLength(values[i]),
 					HostNumber = values[i]
 				});
 			}
 		}
 
-		private void GetSubnets()
+		private void SetSubnets()
 		{
-			byte[] mask;
+			byte[] mask = new byte[4];
 			for (int i = 0; i < howManySubnets; i++)
 			{
-				mask = IPv4Helpers.GetSubnetMask(calculatedNetworks[i].PrefixLength);
+				IPv4Helpers.TryGetSubnetMask(calculatedNetworks[i].PrefixLength, mask);
 				calculatedNetworks[i].SubnetMask = $"{mask[0]}.{mask[1]}.{mask[2]}.{mask[3]}";
 			}
 		}
 
-		private void GetNetworks()
+		private void SetNetworks()
 		{
 			if (calculatedNetworks[0].PrefixLength > 24)
 			{
-				lastUsed[0] = 192;
-				lastUsed[1] = 168;
+				lastSubnet[0] = 192;
+				lastSubnet[1] = 168;
 			}
 			else if (calculatedNetworks[0].PrefixLength > 16)
 			{
-				lastUsed[0] = 172;
-				lastUsed[1] = 16;
+				lastSubnet[0] = 172;
+				lastSubnet[1] = 16;
 			}
 			else if (calculatedNetworks[0].PrefixLength <= 8)
 			{
-				lastUsed[0] = 0;
+				lastSubnet[0] = 0;
 			}
 
 			for (int i = 0; i < howManySubnets; i++)
 			{
-				calculatedNetworks[i].NetworkAddress = $"{lastUsed[0]}.{lastUsed[1]}.{lastUsed[2]}.{lastUsed[3]}";
+				calculatedNetworks[i].NetworkAddress = $"{lastSubnet[0]}.{lastSubnet[1]}.{lastSubnet[2]}.{lastSubnet[3]}";
 				if (calculatedNetworks[i].PrefixLength > 24)
-					lastUsed[3] += (byte)MathHelpers.PowerOfTwo(32 - calculatedNetworks[i].PrefixLength);
+					lastSubnet[3] += (byte)MathHelpers.PowerOfTwo(32 - calculatedNetworks[i].PrefixLength);
 				else if (calculatedNetworks[i].PrefixLength > 16)
-					lastUsed[2] += (byte)MathHelpers.PowerOfTwo(24 - calculatedNetworks[i].PrefixLength);
+					lastSubnet[2] += (byte)MathHelpers.PowerOfTwo(24 - calculatedNetworks[i].PrefixLength);
 				else if (calculatedNetworks[i].PrefixLength > 8)
-					lastUsed[1] += (byte)MathHelpers.PowerOfTwo(16 - calculatedNetworks[i].PrefixLength);
+					lastSubnet[1] += (byte)MathHelpers.PowerOfTwo(16 - calculatedNetworks[i].PrefixLength);
 				else
-					lastUsed[0] += (byte)MathHelpers.PowerOfTwo(8 - calculatedNetworks[i].PrefixLength);
+					lastSubnet[0] += (byte)MathHelpers.PowerOfTwo(8 - calculatedNetworks[i].PrefixLength);
 			}
 		}
 
-		private void GetBroadcast()
+		private void SetBroadcast()
 		{
 			byte[] ip = new byte[4];
 			for (int i = 0; i < howManySubnets; i++)

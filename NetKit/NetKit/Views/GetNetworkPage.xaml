@@ -4,19 +4,23 @@
              x:Class="NetKit.Views.GetNetworkPage"
              Title="IPv4 - Get Network"
              BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}">
-    <ContentPage.Content>
-        <StackLayout Padding="30, 30, 30, 30" 
-                     Spacing="20">
-            <Entry x:Name="hostEntry"
-                   Placeholder="Host Address:"/>
-            <Entry x:Name="maskEntry"
-                   Placeholder="Subnet Mask or Prefix Length:"/>
-            <Button Clicked="Submit"
-                    Text="Submit"
-                    CornerRadius="25"
-                    x:Name="getNetworkButton"/>
-            <Line/>
-            <Label x:Name="outputLabel"/>
-        </StackLayout>
-    </ContentPage.Content>
+	<ContentPage.Content>
+		<StackLayout 
+            Padding="30, 30, 30, 30" 
+            Spacing="20">
+			<Entry
+                Placeholder="Host Address:"
+                x:Name="hostEntry" />
+			<Entry
+                Placeholder="Subnet Mask or Prefix Length:"
+                x:Name="maskEntry" />
+			<Button
+                Clicked="Submit"
+                CornerRadius="25"
+                Text="Submit"
+                x:Name="getNetworkButton" />
+			<Line/>
+			<Label x:Name="outputLabel" />
+		</StackLayout>
+	</ContentPage.Content>
 </ContentPage>

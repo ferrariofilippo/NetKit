@@ -12,15 +12,15 @@ namespace NetKit.Views
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class SubnetV6Page : ContentPage
 	{
+		private readonly SemaphoreSlim semaphore = new SemaphoreSlim(0);
+		public readonly ObservableCollection<string> Addresses = new ObservableCollection<string>();
+		
 		private string[] baseAddress;
 		private byte globalRoutingPrefix = 0;
 		private byte subnetId = 0;
 		private Task processData = Task.CompletedTask;
 		private CancellationTokenSource tokenSource = new CancellationTokenSource();
 		private CancellationToken token;
-		private readonly SemaphoreSlim semaphore = new SemaphoreSlim(0);
-
-		public readonly ObservableCollection<string> Addresses = new ObservableCollection<string>();
 
 		public SubnetV6Page()
 		{

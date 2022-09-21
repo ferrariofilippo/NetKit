@@ -4,21 +4,27 @@
              x:Class="NetKit.Views.NthSubnetPage"
              Title="IPv4 - Find Subnet"
              BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}">
-    <ContentPage.Content>
-        <StackLayout Padding="30, 30, 30, 30" Spacing="30">
-            <Entry Placeholder="Subnet Mask:"
-                   MaxLength="15"
-                   x:Name="maskEntry"/>
-            <Entry Placeholder="Subnet Number:"
-                   MaxLength="9"
-                   x:Name="valueEntry"/>
-            <Button Clicked="GetResults_Clicked"
-                    Text="Submit"
-                    CornerRadius="25"
-                    x:Name="getResultsButton"/>
-            <Line/>
-            <Label x:Name="outputLabel"
-                   Padding="0, 0, 0, 30"/>
-        </StackLayout>
-    </ContentPage.Content>
+	<ContentPage.Content>
+		<StackLayout
+			Padding="30, 30, 30, 30"
+            Spacing="30">
+			<Entry
+				MaxLength="15"
+                Placeholder="Subnet Mask:"
+                x:Name="maskEntry"/>
+			<Entry
+                MaxLength="9"
+                Placeholder="Subnet Number:"
+                x:Name="valueEntry" />
+			<Button
+                Clicked="GetResults_Clicked"
+                CornerRadius="25"
+                Text="Submit"
+                x:Name="getResultsButton" />
+			<Line/>
+			<Label
+                Padding="0, 0, 0, 30"
+                x:Name="outputLabel" />
+		</StackLayout>
+	</ContentPage.Content>
 </ContentPage>

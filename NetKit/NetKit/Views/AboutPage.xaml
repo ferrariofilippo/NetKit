@@ -4,28 +4,30 @@
              x:Class="NetKit.Views.AboutPage"
              Title="About"
              BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}">
-    <ContentPage.Content>
-        <StackLayout Padding="30">
-            <Label x:Name="aboutLabel"/>
-            <Label Text="Credits"
-                   TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Light}}"
-                   FontAttributes="Bold"
-                   FontSize="Title"
-                   Padding="0, 30, 0, 0"/>
-            <Label>
-                <Label.FormattedText>
-                    <FormattedString>
-                        <Span Text="Icons: "/>
-                        <Span Text="https://icons8.com"
-                              TextColor="{AppThemeBinding Light=Blue, Dark=LightBlue}"
-                              TextDecorations="Underline">
-                            <Span.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="LinkTapped"/>
-                            </Span.GestureRecognizers>
-                        </Span>
-                    </FormattedString>
-                </Label.FormattedText>
-            </Label>
-        </StackLayout>
-    </ContentPage.Content>
+	<ContentPage.Content>
+		<StackLayout Padding="30">
+			<Label x:Name="aboutLabel" />
+			<Label
+                FontAttributes="Bold"
+                FontSize="Title"
+                Padding="0, 30, 0, 0"
+                Text="Credits"
+                TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Light}}" />
+			<Label>
+				<Label.FormattedText>
+					<FormattedString>
+						<Span Text="Icons: " />
+						<Span
+                            Text="https://icons8.com"
+                            TextColor="{AppThemeBinding Light=Blue, Dark=LightBlue}"
+                            TextDecorations="Underline">
+							<Span.GestureRecognizers>
+								<TapGestureRecognizer Tapped="LinkTapped"/>
+							</Span.GestureRecognizers>
+						</Span>
+					</FormattedString>
+				</Label.FormattedText>
+			</Label>
+		</StackLayout>
+	</ContentPage.Content>
 </ContentPage>

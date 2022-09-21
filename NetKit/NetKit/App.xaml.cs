@@ -1,4 +1,6 @@
-﻿using Xamarin.Forms;
+﻿using NetKit.Services;
+using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace NetKit
 {
@@ -7,6 +9,8 @@ namespace NetKit
 
         public App()
         {
+            _ = Task.Run(() => IPv4Helpers.Init());
+
             InitializeComponent();
 
             MainPage = new AppShell();

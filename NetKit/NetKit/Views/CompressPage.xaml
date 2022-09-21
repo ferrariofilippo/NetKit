@@ -4,18 +4,22 @@
              x:Class="NetKit.Views.CompressPage"
              Title="IPv6 - Compress"
              BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}">
-    <ContentPage.Content>
-        <StackLayout Padding="40, 20, 40, 20"
-                     Spacing="20">
-            <Entry x:Name="ipEntry"
-                   Placeholder="Enter IP: "/>
-            <Button Text="Compress"
-                    Clicked="CompressClicked"
-                    x:Name="compressButton"/>
-            <Label x:Name="outputLabel"
-                   HorizontalOptions="Center"
-                   FontSize="Large"
-                   Padding="0, 20, 0, 0"/>
-        </StackLayout>
-    </ContentPage.Content>
+	<ContentPage.Content>
+		<StackLayout
+            Padding="40, 20, 40, 20"
+            Spacing="20">
+			<Entry
+                x:Name="ipEntry"
+                Placeholder="Enter IP: " />
+			<Button
+                Clicked="CompressClicked"
+                Text="Compress"
+                x:Name="compressButton" />
+			<Label
+                FontSize="Large"
+                HorizontalOptions="Center"
+                Padding="0, 20, 0, 0"
+                x:Name="outputLabel" />
+		</StackLayout>
+	</ContentPage.Content>
 </ContentPage>

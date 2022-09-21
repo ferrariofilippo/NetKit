@@ -9,9 +9,9 @@ namespace NetKit.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NthSubnetPage : ContentPage
     {
-        private byte value;
         private readonly byte[] subnet = new byte[4];
         private readonly byte[] address = { 0, 0, 0, 0 };
+        private byte value;
 
         public NthSubnetPage()
         {
@@ -20,7 +20,7 @@ namespace NetKit.Views
 
         private async void GetResults_Clicked(object sender, EventArgs e)
         {
-            if (maskEntry.Text == null || !IPv4Helpers.ValidateSubnetMask(subnet, maskEntry.Text.Split('.')))
+            if (maskEntry.Text == null || !IPv4Helpers.TryParseAddress(maskEntry.Text, subnet)) 
             {
                 await DisplayAlert("Error", "Entered Subnet Mask is not valid!", "OK");
                 return;
@@ -56,11 +56,11 @@ namespace NetKit.Views
                         address[0] = 192;
                         address[1] = 168;
                     }
-                    byte lastOne = (byte)(7 - Convert.ToString(subnet[i], 2).LastIndexOf('1'));
-                    if (value > MathHelpers.PowerOfTwo(8 - lastOne))
+                    byte lastBitOne = (byte)(7 - Convert.ToString(subnet[i], 2).LastIndexOf('1'));
+                    if (value > MathHelpers.PowerOfTwo(8 - lastBitOne))
                         return false;
 
-                    byte magicNumber = (byte)(MathHelpers.PowerOfTwo(lastOne) * (value - 1));
+                    byte magicNumber = (byte)(MathHelpers.PowerOfTwo(lastBitOne) * (value - 1));
                     address[i] = magicNumber;
                     return true;
                 }
