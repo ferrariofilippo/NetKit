@@ -42,19 +42,19 @@ namespace NetKit.Views
             {
                 if (subnet[i] != 255)
                 {
-                    if (i == 1)
+                    switch (i)
                     {
-                        address[0] = 10;
-                    }
-                    else if (i == 2)
-                    {
-                        address[0] = 172;
-                        address[1] = 16;
-                    }
-                    else if (i == 3)
-                    {
-                        address[0] = 192;
-                        address[1] = 168;
+                        case 1:
+                            address[0] = 10;
+                            break;
+                        case 2:
+                            address[0] = 172;
+                            address[1] = 16;
+                            break;
+                        case 3: 
+                            address[0] = 192;
+                            address[1] = 168;
+                            break;
                     }
                     byte lastBitOne = (byte)(7 - Convert.ToString(subnet[i], 2).LastIndexOf('1'));
                     if (value > MathHelpers.PowerOfTwo(8 - lastBitOne))

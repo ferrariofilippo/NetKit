@@ -102,8 +102,7 @@ namespace NetKit.Views
 					return null;
 				}
 			}
-			data.OrderByDescending(x=> x);
-			return data;
+			return data.OrderByDescending(x => x).ToList();
 		}	
 
 		private void SetPrefixes()
@@ -120,9 +119,10 @@ namespace NetKit.Views
 
 		private void SetSubnets()
 		{
-			byte[] mask = new byte[4];
+			byte[] mask;
 			for (int i = 0; i < howManySubnets; i++)
 			{
+				mask = new byte[4];
 				IPv4Helpers.TryGetSubnetMask(calculatedNetworks[i].PrefixLength, mask);
 				calculatedNetworks[i].SubnetMask = $"{mask[0]}.{mask[1]}.{mask[2]}.{mask[3]}";
 			}
