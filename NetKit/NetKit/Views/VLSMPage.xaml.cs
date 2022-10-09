@@ -1,8 +1,8 @@
 ﻿using NetKit.Model;
 using NetKit.Services;
+using NetKit.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -13,8 +13,7 @@ namespace NetKit.Views
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class VLSMPage : ContentPage
 	{
-		private readonly ObservableCollection<HostLine> addedItems = new ObservableCollection<HostLine>();
-		private readonly ObservableCollection<Network> networks = new ObservableCollection<Network>();
+		private readonly VLSMViewModel viewModel;
 		private readonly byte[] lastSubnet = { 10, 0, 0, 0 };
 		private readonly List<Network> calculatedNetworks = new List<Network>();
 		private List<uint> values;
@@ -25,28 +24,22 @@ namespace NetKit.Views
 		{
 			InitializeComponent();
 
-			hostsListView.ItemsSource = addedItems;
-			outputListView.ItemsSource = networks;
-			outputListView.HeightRequest = 10;
+			viewModel = new VLSMViewModel();
+			BindingContext = viewModel;
+
+			networkListView.HeightRequest = 10;
 
 			Add_Clicked(null, null);
 		}
 
 		private void Add_Clicked(object sender, EventArgs e)
 		{
-			addedItems.Add(new HostLine());
-			height += hostsListView.RowHeight;
-			hostsListView.HeightRequest = height;
+			viewModel.ExpandInputListView();
 		}
 
 		private void Delete_Clicked(object sender, EventArgs e)
 		{
-			int lastIndex = addedItems.Count - 1;
-			if (lastIndex <= 0)
-				return;
-			addedItems.RemoveAt(lastIndex);
-			height -= hostsListView.RowHeight;
-			hostsListView.HeightRequest = height;
+			viewModel.ContractInputListView();
 		}
 
 		private async void GetResults_Clicked(object sender, EventArgs e)
@@ -65,10 +58,10 @@ namespace NetKit.Views
 					SetNetworks();
 					SetBroadcast();
 				});
-				outputListView.HeightRequest = 30 + outputListView.RowHeight * calculatedNetworks.Count;
-				networks.Clear();
+				networkListView.HeightRequest = 30 + networkListView.RowHeight * calculatedNetworks.Count;
+				viewModel.Networks.Clear();
 				foreach (var item in calculatedNetworks)
-					networks.Add(item);
+					viewModel.Networks.Add(item);
 
 				calculatedNetworks.Clear();
 				lastSubnet[0] = 10;
@@ -85,7 +78,7 @@ namespace NetKit.Views
 		{
 			List<uint> data = new List<uint>();
 			uint size;
-			foreach (var item in addedItems)
+			foreach (var item in viewModel.AddedItems)
 			{
 				if (item.Data.StartsWith("/") || item.Data.StartsWith("\\"))
 					size = IPv4Helpers.GetMinimumWasteHostSize(byte.Parse(item.Data.Substring(1)));

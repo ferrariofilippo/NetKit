@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using NetKit.ViewModels;
+using System.IO;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin.Essentials;
@@ -8,18 +9,21 @@ namespace NetKit.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class AboutPage : ContentPage
     {
+        private readonly AboutViewModel viewModel;
+
         public AboutPage()
         {
             InitializeComponent();
-            if (Device.RuntimePlatform == Device.Android)
-               ReadData();
+            viewModel = new AboutViewModel();
+            BindingContext = viewModel;
+            ReadData();
         }
 
-        async void ReadData()
+        private async void ReadData()
         {
             using (StreamReader stream = new StreamReader(await FileSystem.OpenAppPackageFileAsync("About.txt")))
             {
-                aboutLabel.Text = stream.ReadToEnd();
+                viewModel.Description = stream.ReadToEnd();
             }        
         }
 

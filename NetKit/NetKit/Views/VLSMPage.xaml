@@ -2,8 +2,9 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NetKit.Views.VLSMPage"
-             Title="IPv4 - VLSM"
-             BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}">
+             BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}"
+             Title="IPv4 - VLSM">
+	
 	<ContentPage.Content>
 		<ScrollView
 			Padding="40, 20, 40, 40"
@@ -11,24 +12,26 @@
 			<StackLayout Spacing="20">
 				<StackLayout VerticalOptions="Start">
 					<ListView
-						x:Name="hostsListView" 
-                        RowHeight="40"
+						ItemsSource="{Binding AddedItems}"
+						HeightRequest="{Binding InputListViewHeight}"
+                        RowHeight="{Binding InputLineHeight}"
                         SeparatorVisibility="None">
 						<ListView.ItemTemplate>
 							<DataTemplate>
 								<ViewCell>
 									<Entry
+										MaxLength="9"
 										Placeholder="Enter host number:"
-										Text="{Binding Data}"
-										MaxLength="9"/>
+										Text="{Binding Data}" />
 								</ViewCell>
 							</DataTemplate>
 						</ListView.ItemTemplate>
 					</ListView>
+
 					<Grid>
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="*"/>
-							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
 
 						<ImageButton
@@ -38,6 +41,7 @@
                             HeightRequest="30"
                             HorizontalOptions="Center"
                             Source="{AppThemeBinding Light=Add.png, Dark=WhiteAdd.png}" />
+
 						<ImageButton
                             Grid.Column="1"
     						BackgroundColor="Transparent"
@@ -48,7 +52,6 @@
 					</Grid>
 				</StackLayout>
 
-
 				<Button
 					Clicked="GetResults_Clicked"
                     CornerRadius="25"
@@ -57,26 +60,28 @@
                     Text="Submit"
                     x:Name="vlsmButton" />
 
-				<Line/>
+				<Line />
 
 				<ListView
+					x:Name="networkListView"
+					ItemsSource="{Binding Networks}"
 					RowHeight="150"
 					SelectionMode="None"
-                    SeparatorColor="#a39a38"
-					x:Name="outputListView">
+                    SeparatorColor="#a39a38">
 					<ListView.ItemTemplate>
 						<DataTemplate>
 							<ViewCell>
 								<Grid Margin="0, 25, 0, 15">
 									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="Auto"/>
-										<ColumnDefinition Width="*"/>
+										<ColumnDefinition Width="Auto" />
+										<ColumnDefinition Width="*" />
 									</Grid.ColumnDefinitions>
+									
 									<Grid.RowDefinitions>
-										<RowDefinition Height="*"/>
-										<RowDefinition Height="*"/>
-										<RowDefinition Height="*"/>
-										<RowDefinition Height="*"/>
+										<RowDefinition Height="*" />
+										<RowDefinition Height="*" />
+										<RowDefinition Height="*" />
+										<RowDefinition Height="*" />
 									</Grid.RowDefinitions>
 
 									<Label
@@ -84,6 +89,7 @@
 									    Grid.Row="0"
 										FontAttributes="Bold"
                                         Text="Network: " />
+									
 									<Label 
                                         Grid.Column="1"
                                         Grid.Row="0"
@@ -95,6 +101,7 @@
                                         Grid.Row="1"
                                         FontAttributes="Bold"
                                         Text="Broadcast: " />
+									
 									<Label
                                         Grid.Row="1"
                                         Grid.Column="1"
@@ -106,6 +113,7 @@
                                         Grid.Row="2"
                                         FontAttributes="Bold"
                                         Text="Subnet Mask: " />
+									
 									<Label
                                         Grid.Column="1"
                                         Grid.Row="2"
@@ -117,6 +125,7 @@
                                         Grid.Row="3"
                                         FontAttributes="Bold"
                                         Text="Numero Host: " />
+									
 									<Label
                                         Grid.Column="1"
                                         Grid.Row="3"
@@ -131,3 +140,4 @@
 		</ScrollView>
 	</ContentPage.Content>
 </ContentPage>
+	

@@ -2,34 +2,38 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NetKit.Views.SubnetV6Page"
-             Title="IPv6 - Subnet Calculator"
-             BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}">
+             BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}"
+			 BindingContext="NetKit.ViewModels.SubnetV6ViewModel"
+             Title="IPv6 - Subnet Calculator">
+	
 	<ContentPage.Content>
         <StackLayout
 			Padding="40, 20, 40, 40" 
             VerticalOptions="Start">
             <Entry
-                MaxLength="39"
                 Placeholder="Base Address: "
-                x:Name="baseAddressEntry" />
+                MaxLength="39"
+                Text="{Binding BaseAddress}" />
+			
             <Entry
-				Placeholder="Global Routing Prefix Length (bits): "
                 MaxLength="3"
-                x:Name="globalPrefixEntry" />
+				Placeholder="Global Routing Prefix Length (bits): "
+                Text="{Binding GlobalRoutingPrefix}" />
+			
             <Entry
-				Placeholder="How many subnets: "
                 MaxLength="6"
-                x:Name="howManyEntry" />
+				Placeholder="How many subnets: "
+                Text="{Binding SubnetNumber}" />
+			
             <Button
-				Text="Submit"
-                Clicked="SubmitClicked" />
+                Clicked="SubmitClicked"
+				Text="Submit" />
 
             <Line />
 
-            <ListView 
-				SelectionMode="None"
-				x:Name="subnetListView">
-            </ListView>
-        </StackLayout>
+			<ListView 
+				ItemsSource="{Binding Addresses}"
+				SelectionMode="None" />
+		</StackLayout>
     </ContentPage.Content>
 </ContentPage>

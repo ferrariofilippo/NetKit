@@ -1,6 +1,6 @@
 ﻿using NetKit.Services;
+using NetKit.ViewModels;
 using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +13,7 @@ namespace NetKit.Views
 	public partial class SubnetV6Page : ContentPage
 	{
 		private readonly SemaphoreSlim semaphore = new SemaphoreSlim(0);
-		public readonly ObservableCollection<string> Addresses = new ObservableCollection<string>();
+		private readonly SubnetV6ViewModel viewModel;
 		
 		private string[] baseAddress;
 		private byte globalRoutingPrefix = 0;
@@ -25,8 +25,9 @@ namespace NetKit.Views
 		public SubnetV6Page()
 		{
 			InitializeComponent();
+			viewModel = new SubnetV6ViewModel();
+			BindingContext = viewModel;
 			token = tokenSource.Token;
-			subnetListView.ItemsSource = Addresses;
 		}
 
 		private void SubmitClicked(object sender, EventArgs e)
@@ -36,22 +37,22 @@ namespace NetKit.Views
 				// Read data from User Input
 				if (!GetBaseAddress())
 					return;
-				if (string.IsNullOrWhiteSpace(globalPrefixEntry.Text))
+				if (string.IsNullOrWhiteSpace(viewModel.GlobalRoutingPrefix))
 				{
 					DisplayError("Global Routing Prefix must not be empty!");
 					return;
 				}
 
-				globalRoutingPrefix = byte.Parse(globalPrefixEntry.Text);
+				globalRoutingPrefix = byte.Parse(viewModel.GlobalRoutingPrefix);
 				subnetId = (byte)(16 - (globalRoutingPrefix % 16));
 
-				if (string.IsNullOrWhiteSpace(howManyEntry.Text))
+				if (string.IsNullOrWhiteSpace(viewModel.SubnetNumber))
 				{
 					DisplayError("Subnet number must not be empty!");
 					return;
 				}
 
-				ushort howMany = ushort.Parse(howManyEntry.Text);
+				ushort howMany = ushort.Parse(viewModel.SubnetNumber);
 				byte index = (byte)((globalRoutingPrefix + subnetId) / 16 - 1);
 				string lastDigit = $"{baseAddress[index].Last()}";
 				byte baseValue = byte.Parse(lastDigit,
@@ -78,30 +79,30 @@ namespace NetKit.Views
 
 		private bool GetBaseAddress()
 		{
-			if (string.IsNullOrWhiteSpace(baseAddressEntry.Text))
+			if (string.IsNullOrWhiteSpace(viewModel.BaseAddress))
 			{
 				DisplayError("Base Address must not be empty!");
 				return false;
 			}
 
-			baseAddressEntry.Text = baseAddressEntry.Text.Trim();
+			viewModel.BaseAddress = viewModel.BaseAddress.Trim();
 
-			if (!IPv6Helpers.IsHex(baseAddressEntry.Text.ToUpper()))
+			if (!IPv6Helpers.IsHex(viewModel.BaseAddress.ToUpper()))
 			{
 				DisplayError("Base Address must be Hex");
 				return false;
 			}
 
-			if (baseAddressEntry.Text.EndsWith("::"))
+			if (viewModel.BaseAddress.EndsWith("::"))
 			{
-				baseAddress = IPv6Helpers.Expand(baseAddressEntry.Text.Remove(baseAddressEntry.Text.Length - 1).Split(':'));
+				baseAddress = IPv6Helpers.Expand(viewModel.BaseAddress.Remove(viewModel.BaseAddress.Length - 1).Split(':'));
 			}
 			else
 			{
-				if (baseAddressEntry.Text.Contains("::"))
-					baseAddress = IPv6Helpers.Expand(baseAddressEntry.Text.Split(':'));
+				if (viewModel.BaseAddress.Contains("::"))
+					baseAddress = IPv6Helpers.Expand(viewModel.BaseAddress.Split(':'));
 				else
-					baseAddress = baseAddressEntry.Text.Split(':');
+					baseAddress = viewModel.BaseAddress.Split(':');
 
 				if (baseAddress.Length != 8)
 				{
@@ -143,11 +144,11 @@ namespace NetKit.Views
 
 					ushort address = ushort.Parse(baseAddress[index],
 						System.Globalization.NumberStyles.HexNumber);
-					Addresses.Clear();
+					viewModel.Addresses.Clear();
 					for (ushort i = 0; i < howMany; i++, address++)
 					{
 						token.ThrowIfCancellationRequested();
-						Addresses.Add(GetFormattedAddress(address, index));
+						viewModel.Addresses.Add(GetFormattedAddress(address, index));
 					}
 					token.ThrowIfCancellationRequested();
 				}, token);

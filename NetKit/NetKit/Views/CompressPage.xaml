@@ -2,24 +2,29 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NetKit.Views.CompressPage"
-             Title="IPv6 - Compress"
-             BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}">
+             BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}"
+			 BindingContext="NetKit.ViewModels.CompressViewModel"
+             Title="IPv6 - Compress">
+
 	<ContentPage.Content>
 		<StackLayout
             Padding="40, 20, 40, 20"
             Spacing="20">
 			<Entry
-                x:Name="ipEntry"
-                Placeholder="Enter IP: " />
+                Placeholder="Enter IP: "
+                Text="{Binding IpAddress}" />
+			
 			<Button
                 Clicked="CompressClicked"
                 Text="Compress"
                 x:Name="compressButton" />
+			
 			<Label
                 FontSize="Large"
                 HorizontalOptions="Center"
                 Padding="0, 20, 0, 0"
-                x:Name="outputLabel" />
+                Text="{Binding OutputAddress}" />
 		</StackLayout>
 	</ContentPage.Content>
 </ContentPage>
+	

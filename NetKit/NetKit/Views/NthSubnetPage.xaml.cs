@@ -1,4 +1,5 @@
 ﻿using NetKit.Services;
+using NetKit.ViewModels;
 using System;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -9,6 +10,7 @@ namespace NetKit.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NthSubnetPage : ContentPage
     {
+        private readonly NthSubnetViewModel viewModel;
         private readonly byte[] subnet = new byte[4];
         private readonly byte[] address = { 0, 0, 0, 0 };
         private byte value;
@@ -16,26 +18,33 @@ namespace NetKit.Views
         public NthSubnetPage()
         {
             InitializeComponent();
+            viewModel = new NthSubnetViewModel();
+            BindingContext = viewModel;
         }
 
         private async void GetResults_Clicked(object sender, EventArgs e)
         {
-            if (maskEntry.Text == null || !IPv4Helpers.TryParseAddress(maskEntry.Text, subnet)) 
+            if (viewModel.SubnetMask == null || !IPv4Helpers.TryParseAddress(viewModel.SubnetMask, subnet)) 
             {
                 await DisplayAlert("Error", "Entered Subnet Mask is not valid!", "OK");
                 return;
             }
-            else if (valueEntry.Text == null || !await Task.Run(() => IsValueValid()))
+            else if (viewModel.SubnetNumber == null || !await Task.Run(() => IsValueValid()))
             {
                 await DisplayAlert("Error", "Entered number is not valid for this Subnet Mask!", "OK");
                 return;
             }
-            outputLabel.Text = $"Subnet Address: {address[0]}.{address[1]}.{address[2]}.{address[3]}";
+            viewModel.NetworkAddress = String.Format(
+                "Subnet Address: {0}.{1}.{2}.{3}",
+                address[0],
+                address[1],
+                address[2],
+                address[3]);
         }
 
         private bool IsValueValid()
         {
-            if (!byte.TryParse(valueEntry.Text, out value) || value <= 0)
+            if (!byte.TryParse(viewModel.SubnetNumber, out value) || value <= 0)
                 return false;
 
             for (int i = 0; i < 4; i++)

@@ -2,8 +2,10 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NetKit.Views.NthSubnetPage"
-             Title="IPv4 - Find Subnet"
-             BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}">
+             BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}"
+			 BindingContext="NetKit.ViewModels.NthSubnetViewModel"
+             Title="IPv4 - Find Subnet">
+	
 	<ContentPage.Content>
 		<StackLayout
 			Padding="30, 30, 30, 30"
@@ -11,20 +13,24 @@
 			<Entry
 				MaxLength="15"
                 Placeholder="Subnet Mask:"
-                x:Name="maskEntry"/>
+                Text="{Binding SubnetMask}" />
+			
 			<Entry
                 MaxLength="9"
                 Placeholder="Subnet Number:"
-                x:Name="valueEntry" />
+				Text="{Binding SubnetNumber}" />
+			
 			<Button
                 Clicked="GetResults_Clicked"
                 CornerRadius="25"
                 Text="Submit"
                 x:Name="getResultsButton" />
+			
 			<Line/>
+			
 			<Label
                 Padding="0, 0, 0, 30"
-                x:Name="outputLabel" />
+                Text="{Binding NetworkAddress}" />
 		</StackLayout>
 	</ContentPage.Content>
 </ContentPage>
