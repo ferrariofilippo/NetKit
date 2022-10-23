@@ -36,7 +36,7 @@ namespace NetKit.Views
 				return;
 			}
 
-			viewModel.NetworkAddress = String.Format(
+			viewModel.NetworkAddress = string.Format(
 				"Network Address: {0}.{1}.{2}.{3}",
 				network[0],
 				network[1],

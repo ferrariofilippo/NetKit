@@ -4,8 +4,7 @@
 	{
 		public static uint PowerOfTwo(int exponent)
 		{
-			uint temp = 1;
-			return temp << exponent;
+			return (uint)1 << exponent;
 		}
 	}
 }

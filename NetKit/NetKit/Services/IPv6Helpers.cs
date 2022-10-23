@@ -22,11 +22,8 @@ namespace NetKit.Services
 			{
 				byte j = i;
 				byte size = 0;
-				while (i < length && addressComponents[i].Equals("0"))
-				{
-					i++;
+				while (i < length && addressComponents[i++].Equals("0"))
 					size++;
-				}
 				if (size > parameters[1])
 				{
 					parameters[0] = j;

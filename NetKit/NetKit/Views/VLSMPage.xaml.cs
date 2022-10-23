@@ -17,7 +17,6 @@ namespace NetKit.Views
 		private readonly byte[] lastSubnet = { 10, 0, 0, 0 };
 		private readonly List<Network> calculatedNetworks = new List<Network>();
 		private List<uint> values;
-		private int height = 30;
 		private int howManySubnets = 0;
 
 		public VLSMPage()
@@ -142,13 +141,13 @@ namespace NetKit.Views
 			{
 				calculatedNetworks[i].NetworkAddress = $"{lastSubnet[0]}.{lastSubnet[1]}.{lastSubnet[2]}.{lastSubnet[3]}";
 				if (calculatedNetworks[i].PrefixLength > 24)
-					lastSubnet[3] += (byte)MathHelpers.PowerOfTwo(32 - calculatedNetworks[i].PrefixLength);
+					lastSubnet[3] |= (byte)MathHelpers.PowerOfTwo(32 - calculatedNetworks[i].PrefixLength);
 				else if (calculatedNetworks[i].PrefixLength > 16)
-					lastSubnet[2] += (byte)MathHelpers.PowerOfTwo(24 - calculatedNetworks[i].PrefixLength);
+					lastSubnet[2] |= (byte)MathHelpers.PowerOfTwo(24 - calculatedNetworks[i].PrefixLength);
 				else if (calculatedNetworks[i].PrefixLength > 8)
-					lastSubnet[1] += (byte)MathHelpers.PowerOfTwo(16 - calculatedNetworks[i].PrefixLength);
+					lastSubnet[1] |= (byte)MathHelpers.PowerOfTwo(16 - calculatedNetworks[i].PrefixLength);
 				else
-					lastSubnet[0] += (byte)MathHelpers.PowerOfTwo(8 - calculatedNetworks[i].PrefixLength);
+					lastSubnet[0] |= (byte)MathHelpers.PowerOfTwo(8 - calculatedNetworks[i].PrefixLength);
 			}
 		}
 
@@ -161,15 +160,14 @@ namespace NetKit.Views
 				byte cont = 0;
 				foreach (var item in calculatedNetworks[i].NetworkAddress.Split('.'))
 				{
-					ip[cont] = byte.Parse(item);
-					cont++;
+					ip[cont++] = byte.Parse(item);
 				}
 				for (int j = 0; j < 4; j++)
 				{
 					for (int k = 0; k < 8; k++)
 					{
 						if (j * 8 + k < hostBits)
-							ip[3 - j] += (byte)MathHelpers.PowerOfTwo(k);
+							ip[3 - j] |= (byte)MathHelpers.PowerOfTwo(k);
 						else
 							break;
 					}

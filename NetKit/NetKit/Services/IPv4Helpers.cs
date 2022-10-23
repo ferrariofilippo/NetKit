@@ -20,7 +20,7 @@ namespace NetKit.Services
 				for (int k = 0; k < 8; k++)
 				{
 					if (j * 8 + k < prefixLength)
-						mask[j] += (byte)MathHelpers.PowerOfTwo(7 - k);
+						mask[j] |= (byte)MathHelpers.PowerOfTwo(7 - k);
 					else
 						return true;
 				}
@@ -58,8 +58,7 @@ namespace NetKit.Services
 		public static uint GetMinimumWasteHostSize(uint hosts)
 		{
 			byte index = 0;
-			while (index < SubnetMaxHosts.Count && hosts > SubnetMaxHosts[index])
-				index++;
+			while (index < SubnetMaxHosts.Count && hosts > SubnetMaxHosts[index++]) ;
 			if (index >= SubnetMaxHosts.Count)
 				return 0;
 
@@ -69,8 +68,7 @@ namespace NetKit.Services
 		public static byte GetPrefixLength(uint hosts)
 		{
 			byte prefix = 0;
-			while (hosts > SubnetMaxHosts[prefix])
-				prefix++;
+			while (hosts > SubnetMaxHosts[prefix++]) ;
 			return (byte)(30 - prefix); 
 		}
 
