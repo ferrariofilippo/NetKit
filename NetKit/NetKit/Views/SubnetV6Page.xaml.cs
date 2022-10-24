@@ -118,12 +118,7 @@ namespace NetKit.Views
 		{
 			string[] temp = new string[8];
 			for (byte i = 0; i < 8; i++)
-			{
-				if (i != index)
-					temp[i] = baseAddress[i];
-				else
-					temp[i] = Convert.ToString(value, 16);
-			}
+				temp[i] = i != index ? baseAddress[i] : Convert.ToString(value, 16);
 
 			return IPv6Helpers.Compress(ref temp, 8);
 		}

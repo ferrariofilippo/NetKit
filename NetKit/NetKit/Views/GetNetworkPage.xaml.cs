@@ -50,13 +50,10 @@ namespace NetKit.Views
 			if (string.IsNullOrWhiteSpace(value))
 				return false;
 
-			if (value.StartsWith("\\") || value.StartsWith("/"))
+			if ((value.StartsWith("\\") || value.StartsWith("/")) &&
+				(!byte.TryParse(value.Substring(1), out prefixLength) || !IPv4Helpers.TryGetSubnetMask(prefixLength, mask)))
 			{
-				if (!byte.TryParse(value.Substring(1), out prefixLength) || 
-					!IPv4Helpers.TryGetSubnetMask(prefixLength, mask))
-				{
-					return false;
-				}
+				return false;
 			}
 			else if (!IPv4Helpers.TryParseAddress(value, mask))
 			{

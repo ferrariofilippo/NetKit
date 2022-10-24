@@ -12,12 +12,7 @@ namespace NetKit.Services
 			StringBuilder output = new StringBuilder();
 
 			for (byte i = 0; i < length; i++)
-			{
-				if (!addressComponents[i].Equals(""))
-					addressComponents[i] = OmitLeadingOs(addressComponents[i], i, addressIsO);
-				else
-					addressComponents[i] = "0";
-			}
+				addressComponents[i] = string.IsNullOrWhiteSpace(addressComponents[i]) ? "0" : OmitLeadingOs(addressComponents[i], i, addressIsO);
 			for (byte i = 0; i < length; i++)
 			{
 				byte j = i;

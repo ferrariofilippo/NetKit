@@ -64,8 +64,9 @@ namespace NetKit.Views
 
 				calculatedNetworks.Clear();
 				lastSubnet[0] = 10;
-				for (int i = 1; i < 4; i++)
-					lastSubnet[i] = 0;
+				lastSubnet[1] = 0;
+				lastSubnet[2] = 0;
+				lastSubnet[3] = 0;
 			}
 			catch (Exception)
 			{
