@@ -62,14 +62,14 @@ namespace NetKit.Services
 			if (index >= SubnetMaxHosts.Count)
 				return 0;
 
-			return SubnetMaxHosts[index];
+			return SubnetMaxHosts[--index];
 		}
 
 		public static byte GetPrefixLength(uint hosts)
 		{
 			byte prefix = 0;
 			while (hosts > SubnetMaxHosts[prefix++]) ;
-			return (byte)(30 - prefix); 
+			return (byte)(31 - prefix); 
 		}
 
 		private static void GetSubnetMaxHosts()

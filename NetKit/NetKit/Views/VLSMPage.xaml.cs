@@ -142,13 +142,25 @@ namespace NetKit.Views
 			{
 				calculatedNetworks[i].NetworkAddress = $"{lastSubnet[0]}.{lastSubnet[1]}.{lastSubnet[2]}.{lastSubnet[3]}";
 				if (calculatedNetworks[i].PrefixLength > 24)
-					lastSubnet[3] |= (byte)MathHelpers.PowerOfTwo(32 - calculatedNetworks[i].PrefixLength);
+				{
+					lastSubnet[3] ^= (byte)MathHelpers.PowerOfTwo(32 - calculatedNetworks[i].PrefixLength);
+					if (lastSubnet[3] == 0)
+						lastSubnet[2]++;
+				}
 				else if (calculatedNetworks[i].PrefixLength > 16)
-					lastSubnet[2] |= (byte)MathHelpers.PowerOfTwo(24 - calculatedNetworks[i].PrefixLength);
+				{
+					lastSubnet[2] ^= (byte)MathHelpers.PowerOfTwo(24 - calculatedNetworks[i].PrefixLength);
+					if (lastSubnet[2] == 0)
+						lastSubnet[1]++;
+				}
 				else if (calculatedNetworks[i].PrefixLength > 8)
-					lastSubnet[1] |= (byte)MathHelpers.PowerOfTwo(16 - calculatedNetworks[i].PrefixLength);
+				{
+					lastSubnet[1] ^= (byte)MathHelpers.PowerOfTwo(16 - calculatedNetworks[i].PrefixLength);
+					if (lastSubnet[1] == 0)
+						lastSubnet[0]++;
+				}
 				else
-					lastSubnet[0] |= (byte)MathHelpers.PowerOfTwo(8 - calculatedNetworks[i].PrefixLength);
+					lastSubnet[0] ^= (byte)MathHelpers.PowerOfTwo(8 - calculatedNetworks[i].PrefixLength);
 			}
 		}
 
