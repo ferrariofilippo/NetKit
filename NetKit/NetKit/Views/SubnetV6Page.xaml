@@ -4,11 +4,13 @@
              x:Class="NetKit.Views.SubnetV6Page"
              BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}"
 			 BindingContext="NetKit.ViewModels.SubnetV6ViewModel"
-             Title="IPv6 - Subnet Calculator">
+             Title="IPv6 - Subnet Calculator"
+			 Visual="Material">
 	
 	<ContentPage.Content>
         <StackLayout
-			Padding="40, 20, 40, 40" 
+			Padding="40, 20, 40, 40"
+			Spacing="12"
             VerticalOptions="Start">
             <Entry
                 Placeholder="Base Address: "

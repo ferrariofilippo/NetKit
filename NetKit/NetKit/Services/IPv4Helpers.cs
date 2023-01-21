@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using NetKit.Model;
+using System.Collections.Generic;
 
 namespace NetKit.Services
 {
 	public static class IPv4Helpers
 	{
-		readonly public static List<uint> SubnetMaxHosts = new List<uint>();
+		private static readonly byte[] evenOddWildcardMask = new byte[4] { 0xFF, 0xFF, 0xFF, 0xFE };
+
+        public static readonly List<uint> SubnetMaxHosts = new List<uint>();
 
 		public static void Init()
 		{
@@ -72,6 +75,19 @@ namespace NetKit.Services
 			return (byte)(31 - prefix); 
 		}
 
+        public static ACE CalculateEvenOrOddWildcard(bool isEven, byte[] networkAddress)
+        {
+			for (int i = 0; i < evenOddWildcardMask.Length; i++)
+				networkAddress[i] &= evenOddWildcardMask[i];
+			if (!isEven)
+				networkAddress[3]++;
+			return new ACE
+			{
+				SupportAddress = $"{networkAddress[0]}.{networkAddress[1]}.{networkAddress[2]}.{networkAddress[3]}",
+				WildcardMask = $"{evenOddWildcardMask[0]}.{networkAddress[1]}.{networkAddress[2]}.{networkAddress[3]}"
+			};
+        }
+
 		private static void GetSubnetMaxHosts()
 		{
 			SubnetMaxHosts.Clear();
@@ -81,5 +97,5 @@ namespace NetKit.Services
 			for (int i = 0; i < SubnetMaxHosts.Count; i++)
 				SubnetMaxHosts[i] -= 2;
 		}
-	}
+    }
 }

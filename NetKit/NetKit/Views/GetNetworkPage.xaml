@@ -4,12 +4,13 @@
              x:Class="NetKit.Views.GetNetworkPage"
              BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}"
 			 BindingContext="NetKit.ViewModels.GetNetworkViewModel"
-             Title="IPv4 - Get Network">
+             Title="IPv4 - Get Network"
+			 Visual="Material">
 	
 	<ContentPage.Content>
 		<StackLayout 
             Padding="30, 30, 30, 30" 
-            Spacing="20">
+            Spacing="12">
 			<Entry
                 Placeholder="Host Address:"
                 Text="{Binding HostNumber}" />

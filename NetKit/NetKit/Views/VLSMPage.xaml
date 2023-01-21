@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NetKit.Views.VLSMPage"
              BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}"
-             Title="IPv4 - VLSM">
+             Title="IPv4 - VLSM"
+			 Visual="Material">
 	
 	<ContentPage.Content>
 		<ScrollView
@@ -74,14 +75,14 @@
 								<Grid Margin="0, 25, 0, 15">
 									<Grid.ColumnDefinitions>
 										<ColumnDefinition Width="Auto" />
-										<ColumnDefinition Width="*" />
+										<ColumnDefinition />
 									</Grid.ColumnDefinitions>
 									
 									<Grid.RowDefinitions>
-										<RowDefinition Height="*" />
-										<RowDefinition Height="*" />
-										<RowDefinition Height="*" />
-										<RowDefinition Height="*" />
+										<RowDefinition />
+										<RowDefinition />
+										<RowDefinition />
+										<RowDefinition />
 									</Grid.RowDefinitions>
 
 									<Label

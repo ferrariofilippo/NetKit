@@ -13,7 +13,7 @@ namespace NetKit.ViewModels
 			set => SetProperty(ref inputListViewHeight, value);
 		}
 
-		private int inputLineHeight = 40;
+		private int inputLineHeight = 50;
 		public int InputLineHeight
 		{
 			get => inputLineHeight;

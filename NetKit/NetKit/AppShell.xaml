@@ -60,7 +60,10 @@
     <FlyoutItem Title="IPv4 - VLSM" Icon="{AppThemeBinding Light=Broadcast.png, Dark=WhiteBroadcast.png}">
         <ShellContent Route="VLSMPage" ContentTemplate="{DataTemplate local:VLSMPage}" />
     </FlyoutItem>
-    <FlyoutItem Title="IPv4 - Find Subnet" Icon="{AppThemeBinding Light=Router.png, Dark=WhiteRouter.png}">
+	<FlyoutItem Title="IPv4 - Wildcard Mask" Icon="{AppThemeBinding Light=Wildfire.png, Dark=WhiteWildfire.png}">
+		<ShellContent Route="WildcardPage" ContentTemplate="{DataTemplate local:WildcardPage}" />
+	</FlyoutItem>
+	<FlyoutItem Title="IPv4 - Find Subnet" Icon="{AppThemeBinding Light=Router.png, Dark=WhiteRouter.png}">
         <ShellContent Route="NthSubnetPage" ContentTemplate="{DataTemplate local:NthSubnetPage}" />
     </FlyoutItem>
     <FlyoutItem Title="IPv4 - Get Network" Icon="{AppThemeBinding Light=Network.png, Dark=WhiteNetwork.png}">

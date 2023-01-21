@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NetKit.Views.WildcardPage"
+			 BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}"
+			 BindingContext="NetKit.ViewModels.WildcardViewModel"
+			 Title="Wildcard Mask"
+			 Visual="Material">
+	<ContentPage.Content>
+		<ScrollView
+			Padding="40, 20, 40, 40"
+			VerticalOptions="Start">
+			<Grid RowSpacing="12">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition />
+				</Grid.RowDefinitions>
+				
+				<Picker 
+					x:Name="MethodPicker" 
+					IsVisible="False"
+					Unfocused="MethodPicker_Unfocused"
+					SelectedIndexChanged="MethodPicker_SelectedIndexChanged" />
+
+				<Entry 
+					x:Name="MethodEntry"
+					Focused="MethodEntry_Focused"
+					Placeholder="Choose a method:"
+					Text="{Binding MethodName}" />
+
+				<Entry 
+					Grid.Row="1"
+					IsVisible="{Binding IsGreaterOrSmaller}"
+					Placeholder="Limit value: " 
+					Text="{Binding ValueLimit}" />
+
+				<StackLayout
+					Grid.Row="1"
+					IsVisible="{Binding IsRange}"
+					Spacing="8">
+					<Entry 
+						Placeholder="Lower bound: " 
+						Text="{Binding LowerBound}" />
+
+					<Entry 
+						Placeholder="Upper bound: "
+						Text="{Binding UpperBound}" />
+				</StackLayout>
+
+				<Entry 
+					x:Name="NetworkAddressEntry" 
+					Grid.Row="2"
+					MaxLength="15"
+					Placeholder="Network Address: "
+					Text="{Binding NetworkAddress}" />
+
+				<Button 
+					Grid.Row="3"
+					Clicked="SubmitButton_Clicked"
+					IsEnabled="{Binding IsSubmitEnabled}"
+					Text="Submit" />
+
+				<Line Grid.Row="4" />
+
+				<ListView 
+					x:Name="ACEListView"
+					Grid.Row="5"
+					SelectionMode="None"
+					SeparatorColor="#a39a38">
+					<ListView.ItemTemplate>
+						<DataTemplate>
+							<ViewCell>
+								<Grid Margin="5">
+									<Grid.RowDefinitions>
+										<RowDefinition />
+										<RowDefinition />
+									</Grid.RowDefinitions>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition />
+										<ColumnDefinition />
+									</Grid.ColumnDefinitions>
+
+									<Label 
+										FontAttributes="Bold" 
+										Text="Mask: " />
+
+									<Label 
+										Grid.Column="1"
+										Text="{Binding WildcardMask}" />
+
+									<Label 
+										Grid.Row="1"
+										FontAttributes="Bold"
+										Text="Support: " />
+
+									<Label 
+										Grid.Row="1"
+										Grid.Column="1"
+										Text="{Binding SupportAddress}" />
+								</Grid>
+							</ViewCell>
+						</DataTemplate>
+					</ListView.ItemTemplate>
+				</ListView>
+			</Grid>
+		</ScrollView>
+	</ContentPage.Content>
+</ContentPage>

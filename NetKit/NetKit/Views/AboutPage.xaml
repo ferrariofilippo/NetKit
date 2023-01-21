@@ -4,7 +4,8 @@
              x:Class="NetKit.Views.AboutPage"
              BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}"
 			 BindingContext="NetKit.ViewModels.AboutViewModel"
-             Title="About">
+             Title="About"
+			 Visual="Material">
 
 	<ContentPage.Content>
 		<StackLayout Padding="30">

@@ -2,32 +2,31 @@
 <Application xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NetKit.App">
-    <!--
-        Define global resources and styles here, that apply to all pages in your app.
-    -->
-    <Application.Resources>
+	<Application.Resources>
         <ResourceDictionary>
             <Color x:Key="Primary">#2E7D32</Color>
             <Color x:Key="Light">#60ad5e</Color>
             <Style TargetType="Entry">
-                <Setter Property="TextColor" Value="{AppThemeBinding Light=Black, Dark=White}"/>
-                <Setter Property="PlaceholderColor" Value="{AppThemeBinding Light=DarkSlateGray, Dark=LightGray}"/>
-            </Style>
+				<Setter Property="Visual" Value="Material" />
+				<Setter Property="BackgroundColor" Value="Transparent" />
+				<Setter Property="TextColor" Value="{AppThemeBinding Light=Black, Dark=White}" />
+                <Setter Property="PlaceholderColor" Value="{AppThemeBinding Light=DarkSlateGray, Dark=LightGray}" />
+			</Style>
             <Style TargetType="Button">
-                <Setter Property="TextColor" Value="White"/>
-                <Setter Property="FontSize" Value="Subtitle"/>
-                <Setter Property="CornerRadius" Value="20"/>
-                <Setter Property="BackgroundColor" Value="#60ad5e"/>
-                <Setter Property="FontAttributes" Value="Bold"/>
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="FontSize" Value="Subtitle" />
+                <Setter Property="CornerRadius" Value="20" />
+                <Setter Property="BackgroundColor" Value="#60ad5e" />
+                <Setter Property="FontAttributes" Value="Bold" />
             </Style>
             <Style TargetType="Label">
-                <Setter Property="TextColor" Value="{AppThemeBinding Light=Black, Dark=White}"/>
-                <Setter Property="VerticalOptions" Value="Center"/>
-                <Setter Property="FontSize" Value="Medium"/>
+                <Setter Property="TextColor" Value="{AppThemeBinding Light=Black, Dark=White}" />
+				<Setter Property="VerticalOptions" Value="Center" />
+				<Setter Property="FontSize" Value="Medium" />
             </Style>
             <Style TargetType="Line">
-                <Setter Property="HeightRequest" Value="5"/>
-                <Setter Property="BackgroundColor" Value="{StaticResource Primary}"/>
+                <Setter Property="HeightRequest" Value="5" />
+                <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
             </Style>
         </ResourceDictionary>        
     </Application.Resources>

@@ -4,12 +4,13 @@
              x:Class="NetKit.Views.NthSubnetPage"
              BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}"
 			 BindingContext="NetKit.ViewModels.NthSubnetViewModel"
-             Title="IPv4 - Find Subnet">
+             Title="IPv4 - Find Subnet"
+			 Visual="Material">
 	
 	<ContentPage.Content>
 		<StackLayout
 			Padding="30, 30, 30, 30"
-            Spacing="30">
+            Spacing="12">
 			<Entry
 				MaxLength="15"
                 Placeholder="Subnet Mask:"

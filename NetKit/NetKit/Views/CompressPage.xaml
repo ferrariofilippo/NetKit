@@ -4,12 +4,13 @@
              x:Class="NetKit.Views.CompressPage"
              BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}"
 			 BindingContext="NetKit.ViewModels.CompressViewModel"
-             Title="IPv6 - Compress">
+             Title="IPv6 - Compress"
+			 Visual="Material">
 
 	<ContentPage.Content>
 		<StackLayout
             Padding="40, 20, 40, 20"
-            Spacing="20">
+            Spacing="12">
 			<Entry
                 Placeholder="Enter IP: "
                 Text="{Binding IpAddress}" />
