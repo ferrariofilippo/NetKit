@@ -66,10 +66,10 @@ namespace NetKit.Views
                             break;
                     }
                     byte lastBitOne = (byte)(7 - Convert.ToString(subnet[i], 2).LastIndexOf('1'));
-                    if (value > MathHelpers.PowerOfTwo(8 - lastBitOne))
+                    if (value > MathHelpers.PowersOfTwo[8 - lastBitOne])
                         return false;
 
-                    byte magicNumber = (byte)(MathHelpers.PowerOfTwo(lastBitOne) * (value - 1));
+                    byte magicNumber = (byte)(MathHelpers.PowersOfTwo[lastBitOne] * (value - 1));
                     address[i] = magicNumber;
                     return true;
                 }

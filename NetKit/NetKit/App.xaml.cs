@@ -9,7 +9,8 @@ namespace NetKit
 
         public App()
         {
-            _ = Task.Run(() => IPv4Helpers.Init());
+            MathHelpers.Init();
+            IPv4Helpers.Init();
 
             InitializeComponent();
 

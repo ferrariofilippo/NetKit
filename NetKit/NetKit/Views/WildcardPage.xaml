@@ -55,7 +55,7 @@
 					x:Name="NetworkAddressEntry" 
 					Grid.Row="2"
 					MaxLength="15"
-					Placeholder="Network Address: "
+					Placeholder="Network Address: 192.168.1.0/24"
 					Text="{Binding NetworkAddress}" />
 
 				<Button 

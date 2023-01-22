@@ -2,7 +2,9 @@
 using NetKit.Model;
 using NetKit.Services;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace NetKit.ViewModels
 {
@@ -74,9 +76,9 @@ namespace NetKit.ViewModels
             }
         }
 
-        public bool IsSubmitEnabled => !string.IsNullOrWhiteSpace(_networkAddress) && 
-            (_wildcardMethod is WildcardMethod.Even || 
-            _wildcardMethod is WildcardMethod.Odd || 
+        public bool IsSubmitEnabled => !string.IsNullOrWhiteSpace(_networkAddress) &&
+            (_wildcardMethod is WildcardMethod.Even ||
+            _wildcardMethod is WildcardMethod.Odd ||
             ((_wildcardMethod is WildcardMethod.Greater || _wildcardMethod is WildcardMethod.Smaller) && !string.IsNullOrWhiteSpace(_valueLimit)) ||
             (_wildcardMethod is WildcardMethod.Range && !string.IsNullOrWhiteSpace(_lowerBound) && !string.IsNullOrWhiteSpace(_upperBound)));
 
@@ -88,27 +90,48 @@ namespace NetKit.ViewModels
 
         public readonly string[] WildcardMethods = Enum.GetNames(typeof(WildcardMethod));
 
-        public void CalculateACEs(byte[] network)
+        public Task CalculateACEs(byte[] network, int networkBits)
         {
-            AccessControlEntries.Clear();
-            switch(_wildcardMethod)
-            {
-                case WildcardMethod.Range:
-                    
-                    break;
-                case WildcardMethod.Greater:
-                    
-                    break;
-                case WildcardMethod.Smaller:
-                    
-                    break;
-                case WildcardMethod.Even:
-                    AccessControlEntries.Add(IPv4Helpers.CalculateEvenOrOddWildcard(true, network));
-                    break;
-                case WildcardMethod.Odd:
-                    AccessControlEntries.Add(IPv4Helpers.CalculateEvenOrOddWildcard(false, network));
-                    break;
-            }
+            return Task.Run(() =>
+            { 
+                AccessControlEntries.Clear();
+                List<ACE> entries;
+                switch (_wildcardMethod)
+                {
+                    case WildcardMethod.Range:
+                        var lowerBound = uint.Parse(_lowerBound);
+                        var upperBound = uint.Parse(_upperBound);
+                        entries = IPv4Helpers.CalculateRangeWildcardMask(network, lowerBound, upperBound, networkBits);
+
+                        if (entries.Count > 0)
+                            entries.ForEach(ace => AccessControlEntries.Add(ace));
+                        break;
+
+                    case WildcardMethod.Greater:
+                        var lowerLimit = uint.Parse(_valueLimit);
+                        entries = IPv4Helpers.CalculateGreaterThanWildcardMask(network, lowerLimit, networkBits);
+
+                        if (entries.Count > 0)
+                            entries.ForEach(ace => AccessControlEntries.Add(ace));
+                        break;
+
+                    case WildcardMethod.Smaller:
+                        var upperLimit = uint.Parse(_valueLimit);
+                        entries = IPv4Helpers.CalculateSmallerThanWildcardMask(network, upperLimit, networkBits);
+
+                        if (entries.Count > 0)
+                            entries.ForEach(ace => AccessControlEntries.Add(ace));
+                        break;
+
+                    case WildcardMethod.Even:
+                        AccessControlEntries.Add(IPv4Helpers.CalculateEvenOrOddWildcard(true, network, networkBits));
+                        break;
+
+                    case WildcardMethod.Odd:
+                        AccessControlEntries.Add(IPv4Helpers.CalculateEvenOrOddWildcard(false, network, networkBits));
+                        break;
+                }
+            });
         }
     }
 
