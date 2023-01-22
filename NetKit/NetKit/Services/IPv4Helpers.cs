@@ -99,6 +99,9 @@ namespace NetKit.Services
         public static List<ACE> CalculateGreaterThanWildcardMask(byte[] networkAddress, uint lowerBound, int networkBits)
         {
             var exponent = MathHelpers.GetExcessBase2Log(lowerBound);
+            if (exponent <= 0)
+                return new List<ACE>();
+
             var wildcard = GetNetworkWildcard(networkBits);
             var aces = new List<ACE>()
             {
@@ -125,8 +128,10 @@ namespace NetKit.Services
 
         public static List<ACE> CalculateSmallerThanWildcardMask(byte[] networkAddress, uint upperBound, int networkBits)
         {
-            // TOOD: Optimize. ATM this creates 2 ACEs that can be merged
             var exponent = MathHelpers.GetDefectBase2Log(upperBound);
+            if (exponent <= 0)
+                return new List<ACE>();
+
             var wildcard = GetNetworkWildcard(networkBits);
             var aces = new List<ACE>()
             {
@@ -249,14 +254,14 @@ namespace NetKit.Services
             var exponentCopy = (3 - whichByte) * 8;   // This way we get only 0, 8, 16, 24
             var addressesSum = lowerBound;
             var settedBits = 0u;
+            exponent--;
             for (int i = 31; i >= exponent; i--)
                 settedBits += MathHelpers.PowersOfTwo[i];
-            exponent--;
 
             while (exponent >= 0 && (addressesSum + MathHelpers.PowersOfTwo[exponent]) > upperBound)
             {
-                settedBits += MathHelpers.PowersOfTwo[exponent];
                 exponent--;
+                settedBits += MathHelpers.PowersOfTwo[exponent];
             }
 
             var tempMask = new byte[4] { mask[0], mask[1], mask[2], mask[3] };
