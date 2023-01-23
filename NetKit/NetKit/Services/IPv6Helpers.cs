@@ -5,11 +5,19 @@ namespace NetKit.Services
 {
 	public static class IPv6Helpers
 	{
+		private const int HEXTET_PER_ADDRESS = 8;
+		private const int LAST_HEXTET_INDEX = 7;
+		private const int UPPERCASE_A_ASCII = 65;
+		private const int UPPERCASE_F_ASCII = 70;
+		private const int COLON_ASCII = 58;
+		private const int ZERO_ASCII = 48;
+		private const int NINE_ACSII = 57;
+
 		public static string Compress(ref string[] addressComponents, byte length)
 		{
-			bool[] addressIsO = new bool[8];
-			byte[] parameters = new byte[2];
-			StringBuilder output = new StringBuilder();
+			var addressIsO = new bool[HEXTET_PER_ADDRESS];
+			var parameters = new byte[2];
+			var output = new StringBuilder();
 
 			for (byte i = 0; i < length; i++)
 				addressComponents[i] = string.IsNullOrWhiteSpace(addressComponents[i]) ? "0" : OmitLeadingOs(addressComponents[i], i, addressIsO);
@@ -44,7 +52,7 @@ namespace NetKit.Services
 				else
 				{
 					output.Append(addressComponents[i]);
-					if (i != 7)
+					if (i != LAST_HEXTET_INDEX)
 						output.Append(":");
 				}
 			}
@@ -62,7 +70,7 @@ namespace NetKit.Services
 				return false;
 
 			addressComponents = address.Split(':');
-			if (addressComponents.Length != 8)
+			if (addressComponents.Length != HEXTET_PER_ADDRESS)
 				return false;
 
 			return true;
@@ -72,7 +80,7 @@ namespace NetKit.Services
 		{
 			foreach (var c in address)
 			{
-				if ((c < 48 || c > 57) && (c < 65 || c > 70) && c != 58)
+				if ((c < ZERO_ASCII || c > NINE_ACSII) && (c < UPPERCASE_A_ASCII || c > UPPERCASE_F_ASCII) && c != COLON_ASCII)
 					return false;
 			}
 			return true;
@@ -80,8 +88,8 @@ namespace NetKit.Services
 
 		public static string[] Expand(string[] compressedAddress)
 		{
-			string[] result = new string[8];
-			int removedComponents = 8 - compressedAddress.Length;
+			var result = new string[HEXTET_PER_ADDRESS];
+			var removedComponents = HEXTET_PER_ADDRESS - compressedAddress.Length;
 
 			for (int i = 0, j = 0; i < compressedAddress.Length; i++, j++)
 			{

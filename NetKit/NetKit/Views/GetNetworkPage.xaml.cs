@@ -10,10 +10,12 @@ namespace NetKit.Views
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class GetNetworkPage : ContentPage
 	{
+		private const int BYTES_PER_ADDRESS = 4;
+
 		private readonly GetNetworkViewModel viewModel;
-		private readonly byte[] network = new byte[4];
-		private readonly byte[] host = new byte[4];
-		private readonly byte[] mask = new byte[4];
+		private readonly byte[] network = new byte[BYTES_PER_ADDRESS];
+		private readonly byte[] host = new byte[BYTES_PER_ADDRESS];
+		private readonly byte[] mask = new byte[BYTES_PER_ADDRESS];
 		private byte prefixLength;
 
 		public GetNetworkPage()
@@ -60,7 +62,7 @@ namespace NetKit.Views
 				return false;
 			}
 
-			for (int i = 0; i < 4; i++)
+			for (int i = 0; i < BYTES_PER_ADDRESS; i++)
 				network[i] = (byte)(host[i] & mask[i]);
 			return true;
 		}

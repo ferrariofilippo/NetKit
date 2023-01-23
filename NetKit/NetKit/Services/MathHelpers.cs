@@ -2,7 +2,9 @@
 {
 	public static class MathHelpers
 	{
-		public static readonly uint[] PowersOfTwo = new uint[32];
+		private const int BITS_PER_ADDRESS = 32;
+
+		public static readonly uint[] PowersOfTwo = new uint[BITS_PER_ADDRESS];
 
 		public static void Init()
 		{
@@ -19,7 +21,7 @@
 
 		public static int GetDefectBase2Log(uint n)
 		{
-			var index = 32;
+			var index = BITS_PER_ADDRESS;
 			while (n < PowersOfTwo[--index]) ;
 			return index;
 		}

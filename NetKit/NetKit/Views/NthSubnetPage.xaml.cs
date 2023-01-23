@@ -10,8 +10,11 @@ namespace NetKit.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NthSubnetPage : ContentPage
     {
+        private const int BYTES_PER_ADDRESS = 4;
+        private const int BYTE_MAX_VALUE = 255;
+
         private readonly NthSubnetViewModel viewModel;
-        private readonly byte[] subnet = new byte[4];
+        private readonly byte[] subnet = new byte[BYTES_PER_ADDRESS];
         private readonly byte[] address = { 0, 0, 0, 0 };
         private byte value;
 
@@ -47,9 +50,9 @@ namespace NetKit.Views
             if (!byte.TryParse(viewModel.SubnetNumber, out value) || value <= 0)
                 return false;
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < BYTES_PER_ADDRESS; i++)
             {
-                if (subnet[i] != 255)
+                if (subnet[i] != BYTE_MAX_VALUE)
                 {
                     switch (i)
                     {

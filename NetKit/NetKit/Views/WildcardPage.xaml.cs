@@ -57,12 +57,12 @@ namespace NetKit.Views
             }
             if (_viewModel.IsRange)
             {
-                if (string.IsNullOrWhiteSpace(_viewModel.LowerBound) || !uint.TryParse(_viewModel.LowerBound, out _))
+                if (string.IsNullOrWhiteSpace(_viewModel.LowerBound) || !uint.TryParse(_viewModel.LowerBound, out uint lower))
                 {
                     DisplayAlert("Invalid Data", "Lower bound is invalid", "OK");
                     return false;
                 }
-                else if (string.IsNullOrWhiteSpace(_viewModel.UpperBound) || !uint.TryParse(_viewModel.UpperBound, out _))
+                else if (string.IsNullOrWhiteSpace(_viewModel.UpperBound) || !uint.TryParse(_viewModel.UpperBound, out uint upper) || lower > upper)
                 {
                     DisplayAlert("Invalid Data", "Upper bound is invalid", "OK");
                     return false;

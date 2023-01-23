@@ -13,6 +13,11 @@ namespace NetKit.Views
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class VLSMPage : ContentPage
 	{
+		private const int BITS_PER_ADDRESS = 32;
+		private const int BITS_PER_BYTE = 8;
+		private const int BYTES_PER_ADDRESS = 4;
+		private const int INPUT_MINIMUM_HEIGHT = 30;
+
 		private readonly VLSMViewModel viewModel;
 		private readonly byte[] lastSubnet = { 10, 0, 0, 0 };
 		private readonly List<Network> calculatedNetworks = new List<Network>();
@@ -57,7 +62,7 @@ namespace NetKit.Views
 					SetNetworks();
 					SetBroadcast();
 				});
-				networkListView.HeightRequest = 30 + networkListView.RowHeight * calculatedNetworks.Count;
+				networkListView.HeightRequest = INPUT_MINIMUM_HEIGHT + networkListView.RowHeight * calculatedNetworks.Count;
 				viewModel.Networks.Clear();
 				foreach (var item in calculatedNetworks)
 					viewModel.Networks.Add(item);
@@ -76,7 +81,7 @@ namespace NetKit.Views
 
 		private List<uint> GetValues()
 		{
-			List<uint> data = new List<uint>();
+			var data = new List<uint>();
 			uint size;
 			foreach (var item in viewModel.AddedItems)
 			{
@@ -115,7 +120,7 @@ namespace NetKit.Views
 			byte[] mask;
 			for (int i = 0; i < howManySubnets; i++)
 			{
-				mask = new byte[4];
+				mask = new byte[BYTES_PER_ADDRESS];
 				IPv4Helpers.TryGetSubnetMask(calculatedNetworks[i].PrefixLength, mask);
 				calculatedNetworks[i].SubnetMask = $"{mask[0]}.{mask[1]}.{mask[2]}.{mask[3]}";
 			}
@@ -166,20 +171,20 @@ namespace NetKit.Views
 
 		private void SetBroadcast()
 		{
-			byte[] ip = new byte[4];
+			var ip = new byte[BYTES_PER_ADDRESS];
 			for (int i = 0; i < howManySubnets; i++)
 			{
-				byte hostBits = (byte)(32 - calculatedNetworks[i].PrefixLength);
+				byte hostBits = (byte)(BITS_PER_ADDRESS - calculatedNetworks[i].PrefixLength);
 				byte cont = 0;
 				foreach (var item in calculatedNetworks[i].NetworkAddress.Split('.'))
 				{
 					ip[cont++] = byte.Parse(item);
 				}
-				for (int j = 0; j < 4; j++)
+				for (int j = 0; j < BYTES_PER_ADDRESS; j++)
 				{
-					for (int k = 0; k < 8; k++)
+					for (int k = 0; k < BITS_PER_BYTE; k++)
 					{
-						if (j * 8 + k < hostBits)
+						if (j * BITS_PER_BYTE + k < hostBits)
 							ip[3 - j] |= (byte)MathHelpers.PowersOfTwo[k];
 						else
 							break;

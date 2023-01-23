@@ -12,6 +12,10 @@ namespace NetKit.Views
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class SubnetV6Page : ContentPage
 	{
+		private const int HEXTET_SIZE = 16;
+		private const int HEXTET_PER_ADDRESS = 8;
+		private const int BYTE_SIZE = 8;
+
 		private readonly SemaphoreSlim semaphore = new SemaphoreSlim(0);
 		private readonly SubnetV6ViewModel viewModel;
 		
@@ -44,7 +48,7 @@ namespace NetKit.Views
 				}
 
 				globalRoutingPrefix = byte.Parse(viewModel.GlobalRoutingPrefix);
-				subnetId = (byte)(16 - (globalRoutingPrefix % 16));
+				subnetId = (byte)(HEXTET_SIZE - (globalRoutingPrefix % HEXTET_SIZE));
 
 				if (string.IsNullOrWhiteSpace(viewModel.SubnetNumber))
 				{
@@ -52,10 +56,10 @@ namespace NetKit.Views
 					return;
 				}
 
-				ushort howMany = ushort.Parse(viewModel.SubnetNumber);
-				byte index = (byte)((globalRoutingPrefix + subnetId) / 16 - 1);
-				string lastDigit = $"{baseAddress[index].Last()}";
-				byte baseValue = byte.Parse(lastDigit,
+				var howMany = ushort.Parse(viewModel.SubnetNumber);
+				var index = (byte)((globalRoutingPrefix + subnetId) / HEXTET_SIZE - 1);
+				var lastDigit = $"{baseAddress[index].Last()}";
+				var baseValue = byte.Parse(lastDigit,
 					System.Globalization.NumberStyles.HexNumber);
 
 				if (howMany > (1 << subnetId - baseValue))
@@ -104,7 +108,7 @@ namespace NetKit.Views
 				else
 					baseAddress = viewModel.BaseAddress.Split(':');
 
-				if (baseAddress.Length != 8)
+				if (baseAddress.Length != HEXTET_PER_ADDRESS)
 				{
 					DisplayError("Base address in not in the correct format!");
 					return false;
@@ -116,11 +120,11 @@ namespace NetKit.Views
 
 		private string GetFormattedAddress(uint value, byte index)
 		{
-			string[] temp = new string[8];
-			for (byte i = 0; i < 8; i++)
-				temp[i] = i != index ? baseAddress[i] : Convert.ToString(value, 16);
+			var temp = new string[HEXTET_PER_ADDRESS];
+			for (byte i = 0; i < HEXTET_PER_ADDRESS; i++)
+				temp[i] = i != index ? baseAddress[i] : Convert.ToString(value, HEXTET_SIZE);
 
-			return IPv6Helpers.Compress(ref temp, 8);
+			return IPv6Helpers.Compress(ref temp, HEXTET_PER_ADDRESS);
 		}
 
 		private async Task Submit(ushort howMany)
@@ -135,10 +139,10 @@ namespace NetKit.Views
 
 				processData = Task.Run(() =>
 				{
-					byte index = (byte)((globalRoutingPrefix + subnetId) / 16 - 1);
-
-					ushort address = ushort.Parse(baseAddress[index],
+					var index = (byte)((globalRoutingPrefix + subnetId) / HEXTET_SIZE - 1);
+					var address = ushort.Parse(baseAddress[index],
 						System.Globalization.NumberStyles.HexNumber);
+
 					viewModel.Addresses.Clear();
 					for (ushort i = 0; i < howMany; i++, address++)
 					{
