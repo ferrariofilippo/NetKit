@@ -14,7 +14,6 @@ namespace NetKit.Views
 	{
 		private const int HEXTET_SIZE = 16;
 		private const int HEXTET_PER_ADDRESS = 8;
-		private const int BYTE_SIZE = 8;
 
 		private readonly SemaphoreSlim semaphore = new SemaphoreSlim(0);
 		private readonly SubnetV6ViewModel viewModel;
@@ -38,7 +37,6 @@ namespace NetKit.Views
 		{
 			try
 			{
-				// Read data from User Input
 				if (!GetBaseAddress())
 					return;
 				if (string.IsNullOrWhiteSpace(viewModel.GlobalRoutingPrefix))
@@ -46,15 +44,14 @@ namespace NetKit.Views
 					DisplayError("Global Routing Prefix must not be empty!");
 					return;
 				}
-
-				globalRoutingPrefix = byte.Parse(viewModel.GlobalRoutingPrefix);
-				subnetId = (byte)(HEXTET_SIZE - (globalRoutingPrefix % HEXTET_SIZE));
-
 				if (string.IsNullOrWhiteSpace(viewModel.SubnetNumber))
 				{
 					DisplayError("Subnet number must not be empty!");
 					return;
 				}
+
+				globalRoutingPrefix = byte.Parse(viewModel.GlobalRoutingPrefix);
+				subnetId = (byte)(HEXTET_SIZE - (globalRoutingPrefix % HEXTET_SIZE));
 
 				var howMany = ushort.Parse(viewModel.SubnetNumber);
 				var index = (byte)((globalRoutingPrefix + subnetId) / HEXTET_SIZE - 1);
@@ -77,7 +74,7 @@ namespace NetKit.Views
 			}
 			catch (Exception)
 			{
-				DisplayAlert("Error", "Entered data is not valid", "OK");
+				DisplayError("Entered data is not valid");
 			}
 		}
 
@@ -99,7 +96,8 @@ namespace NetKit.Views
 
 			if (viewModel.BaseAddress.EndsWith("::"))
 			{
-				baseAddress = IPv6Helpers.Expand(viewModel.BaseAddress.Remove(viewModel.BaseAddress.Length - 1).Split(':'));
+				baseAddress = IPv6Helpers.Expand(
+					viewModel.BaseAddress.Remove(viewModel.BaseAddress.Length - 1).Split(':'));
 			}
 			else
 			{

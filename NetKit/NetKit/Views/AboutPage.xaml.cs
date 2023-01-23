@@ -1,4 +1,5 @@
 ﻿using NetKit.ViewModels;
+using System;
 using System.IO;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -9,6 +10,10 @@ namespace NetKit.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class AboutPage : ContentPage
     {
+        private const string ABOUT_PATH = "About.txt";
+
+        private readonly Uri _iconsCredits = new Uri("https://icons8.com");
+
         private readonly AboutViewModel viewModel;
 
         public AboutPage()
@@ -21,15 +26,13 @@ namespace NetKit.Views
 
         private async void ReadData()
         {
-            using (StreamReader stream = new StreamReader(await FileSystem.OpenAppPackageFileAsync("About.txt")))
-            {
+            using (var stream = new StreamReader(await FileSystem.OpenAppPackageFileAsync(ABOUT_PATH)))
                 viewModel.Description = stream.ReadToEnd();
-            }        
         }
 
-        private async void LinkTapped(object sender, System.EventArgs e)
+        private async void LinkTapped(object sender, EventArgs e)
         {
-            await Launcher.OpenAsync(new System.Uri("https://icons8.com"));
+            await Launcher.OpenAsync(_iconsCredits);
         }
     }
 }

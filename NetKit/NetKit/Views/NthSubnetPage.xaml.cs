@@ -10,6 +10,7 @@ namespace NetKit.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NthSubnetPage : ContentPage
     {
+        private const int BITS_PER_BYTE = 8;
         private const int BYTES_PER_ADDRESS = 4;
         private const int BYTE_MAX_VALUE = 255;
 
@@ -68,11 +69,11 @@ namespace NetKit.Views
                             address[1] = 168;
                             break;
                     }
-                    byte lastBitOne = (byte)(7 - Convert.ToString(subnet[i], 2).LastIndexOf('1'));
-                    if (value > MathHelpers.PowersOfTwo[8 - lastBitOne])
+                    var lastBitOne = (byte)(7 - Convert.ToString(subnet[i], 2).LastIndexOf('1'));
+                    if (value > MathHelpers.PowersOfTwo[BITS_PER_BYTE - lastBitOne])
                         return false;
 
-                    byte magicNumber = (byte)(MathHelpers.PowersOfTwo[lastBitOne] * (value - 1));
+                    var magicNumber = (byte)(MathHelpers.PowersOfTwo[lastBitOne] * (value - 1));
                     address[i] = magicNumber;
                     return true;
                 }

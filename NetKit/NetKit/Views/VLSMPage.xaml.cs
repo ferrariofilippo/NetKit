@@ -174,12 +174,11 @@ namespace NetKit.Views
 			var ip = new byte[BYTES_PER_ADDRESS];
 			for (int i = 0; i < howManySubnets; i++)
 			{
-				byte hostBits = (byte)(BITS_PER_ADDRESS - calculatedNetworks[i].PrefixLength);
-				byte cont = 0;
+				var hostBits = (byte)(BITS_PER_ADDRESS - calculatedNetworks[i].PrefixLength);
+				var cont = 0;
 				foreach (var item in calculatedNetworks[i].NetworkAddress.Split('.'))
-				{
 					ip[cont++] = byte.Parse(item);
-				}
+				
 				for (int j = 0; j < BYTES_PER_ADDRESS; j++)
 				{
 					for (int k = 0; k < BITS_PER_BYTE; k++)

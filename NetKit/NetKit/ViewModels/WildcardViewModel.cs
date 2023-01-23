@@ -101,7 +101,7 @@ namespace NetKit.ViewModels
                     case WildcardMethod.Range:
                         var lowerBound = uint.Parse(_lowerBound);
                         var upperBound = uint.Parse(_upperBound);
-                        entries = IPv4Helpers.CalculateRangeWildcardMask(network, lowerBound, upperBound, networkBits);
+                        entries = WildcardHelpers.CalculateRangeWildcardMask(network, lowerBound, upperBound, networkBits);
 
                         if (entries.Count > 0)
                             entries.ForEach(ace => AccessControlEntries.Add(ace));
@@ -109,7 +109,7 @@ namespace NetKit.ViewModels
 
                     case WildcardMethod.Greater:
                         var lowerLimit = uint.Parse(_valueLimit);
-                        entries = IPv4Helpers.CalculateGreaterThanWildcardMask(network, lowerLimit, networkBits);
+                        entries = WildcardHelpers.CalculateGreaterThanWildcardMask(network, lowerLimit, networkBits);
 
                         if (entries.Count > 0)
                             entries.ForEach(ace => AccessControlEntries.Add(ace));
@@ -117,18 +117,18 @@ namespace NetKit.ViewModels
 
                     case WildcardMethod.Smaller:
                         var upperLimit = uint.Parse(_valueLimit);
-                        entries = IPv4Helpers.CalculateSmallerThanWildcardMask(network, upperLimit, networkBits);
+                        entries = WildcardHelpers.CalculateSmallerThanWildcardMask(network, upperLimit, networkBits);
 
                         if (entries.Count > 0)
                             entries.ForEach(ace => AccessControlEntries.Add(ace));
                         break;
 
                     case WildcardMethod.Even:
-                        AccessControlEntries.Add(IPv4Helpers.CalculateEvenOrOddWildcard(true, network, networkBits));
+                        AccessControlEntries.Add(WildcardHelpers.CalculateEvenOrOddWildcard(true, network, networkBits));
                         break;
 
                     case WildcardMethod.Odd:
-                        AccessControlEntries.Add(IPv4Helpers.CalculateEvenOrOddWildcard(false, network, networkBits));
+                        AccessControlEntries.Add(WildcardHelpers.CalculateEvenOrOddWildcard(false, network, networkBits));
                         break;
                 }
             });
