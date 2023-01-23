@@ -175,8 +175,23 @@ namespace NetKit.Services
             }
 
             var wildcard = GetNetworkWildcard(networkBits);
+            var lowerExponent = MathHelpers.GetExcessBase2Log(lowerBound);
+            var upperExponent = MathHelpers.GetDefectBase2Log(upperBound);
 
-            var exponent = MathHelpers.GetExcessBase2Log(lowerBound);
+            var medianPowerOfTwo = MathHelpers.PowersOfTwo[lowerExponent];
+            if (upperExponent > lowerExponent + 1)
+            {
+                while (upperBound > medianPowerOfTwo)
+                    aces.Add(GetGreaterThanEntry(networkAddress, wildcard, medianPowerOfTwo, ref upperBound, upperExponent));
+                while (lowerBound < medianPowerOfTwo)
+                    aces.Add(GetSmallerThanEntry(networkAddress, wildcard, medianPowerOfTwo, ref lowerBound, lowerExponent));
+            }
+            else
+            {
+                // TODO: Optimize this (It works but it doesn't merge ACEs when it could)
+                while (lowerBound < upperBound)
+                    aces.Add(GetSmallerThanEntry(networkAddress, wildcard, upperBound, ref lowerBound, lowerExponent));
+            }
 
             return aces;
         }
