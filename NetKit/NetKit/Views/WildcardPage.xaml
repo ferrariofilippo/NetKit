@@ -1,11 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              x:Class="NetKit.Views.WildcardPage"
 			 BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}"
 			 BindingContext="NetKit.ViewModels.WildcardViewModel"
 			 Title="Wildcard Mask"
 			 Visual="Material">
+	
+	<ContentPage.Resources>
+		<ResourceDictionary>
+			<xct:InvertedBoolConverter x:Key="BoolNegationConverter" />
+		</ResourceDictionary>
+	</ContentPage.Resources>
+	
 	<ContentPage.Content>
 		<ScrollView
 			Padding="40, 20, 40, 40"
@@ -35,7 +43,7 @@
 				<Entry 
 					Grid.Row="1"
 					IsVisible="{Binding IsGreaterOrSmaller}"
-					Placeholder="Limit value: " 
+					Placeholder="Limit value:" 
 					Text="{Binding ValueLimit}" />
 
 				<StackLayout
@@ -43,7 +51,7 @@
 					IsVisible="{Binding IsRange}"
 					Spacing="8">
 					<Entry 
-						Placeholder="Lower bound: " 
+						Placeholder="Lower bound:" 
 						Text="{Binding LowerBound}" />
 
 					<Entry 
@@ -54,9 +62,25 @@
 				<Entry 
 					x:Name="NetworkAddressEntry" 
 					Grid.Row="2"
+					IsVisible="{Binding IsClass, Converter={StaticResource BoolNegationConverter}}"
 					MaxLength="15"
 					Placeholder="Network Address: 192.168.1.0/24"
 					Text="{Binding NetworkAddress}" />
+
+				<Picker
+					x:Name="ClassPicker"
+					Grid.Row="2"
+					IsVisible="False"
+					Unfocused="ClassPicker_Unfocused"
+					SelectedIndexChanged="ClassPicker_SelectedIndexChanged" />
+
+				<Entry 
+					x:Name="ClassEntry"
+					Grid.Row="2"
+					Focused="ClassEntry_Focused"
+					IsVisible="{Binding IsClass}"
+					Placeholder="Choose a class:"
+					Text="{Binding ClassName}" />
 
 				<Button 
 					Grid.Row="3"

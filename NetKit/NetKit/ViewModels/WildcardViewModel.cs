@@ -26,10 +26,25 @@ namespace NetKit.ViewModels
                 if (SetProperty(ref _wildcardMethod, value))
                 {
                     OnPropertyChanged(nameof(IsRange));
-                    OnPropertyChanged(nameof(IsGreaterOrSmaller));
+					OnPropertyChanged(nameof(IsGreaterOrSmaller));
+					OnPropertyChanged(nameof(IsClass));
                     OnPropertyChanged(nameof(IsSubmitEnabled));
                 }
             }
+        }
+
+        private string _className;
+        public string ClassName
+        {
+            get => _className;
+            set => SetProperty(ref _className, value);
+        }
+
+        private NetworkClass _networkClass;
+        public NetworkClass NetworkClass
+        {
+            get => _networkClass;
+            set => SetProperty(ref _networkClass, value);
         }
 
         private string _networkAddress;
@@ -76,19 +91,25 @@ namespace NetKit.ViewModels
             }
         }
 
-        public bool IsSubmitEnabled => !string.IsNullOrWhiteSpace(_networkAddress) &&
+        public bool IsSubmitEnabled => _wildcardMethod is WildcardMethod.Class ||
+            (!string.IsNullOrWhiteSpace(_networkAddress) &&
             (_wildcardMethod is WildcardMethod.Even ||
             _wildcardMethod is WildcardMethod.Odd ||
+            _wildcardMethod is WildcardMethod.Network ||
             ((_wildcardMethod is WildcardMethod.Greater || _wildcardMethod is WildcardMethod.Smaller) && !string.IsNullOrWhiteSpace(_valueLimit)) ||
-            (_wildcardMethod is WildcardMethod.Range && !string.IsNullOrWhiteSpace(_lowerBound) && !string.IsNullOrWhiteSpace(_upperBound)));
+            (_wildcardMethod is WildcardMethod.Range && !string.IsNullOrWhiteSpace(_lowerBound) && !string.IsNullOrWhiteSpace(_upperBound))));
 
         public bool IsRange => _wildcardMethod is WildcardMethod.Range;
 
         public bool IsGreaterOrSmaller => _wildcardMethod is WildcardMethod.Greater || _wildcardMethod is WildcardMethod.Smaller;
 
+        public bool IsClass => _wildcardMethod is WildcardMethod.Class;
+
         public ObservableCollection<ACE> AccessControlEntries = new ObservableCollection<ACE>();
 
         public readonly string[] WildcardMethods = Enum.GetNames(typeof(WildcardMethod));
+
+        public readonly string[] ClassNames = Enum.GetNames(typeof(NetworkClass));
 
         public Task CalculateACEs(byte[] network, int networkBits)
         {
@@ -130,6 +151,14 @@ namespace NetKit.ViewModels
                     case WildcardMethod.Odd:
                         AccessControlEntries.Add(WildcardHelpers.CalculateEvenOrOddWildcard(false, network, networkBits));
                         break;
+
+                    case WildcardMethod.Network:
+                        AccessControlEntries.Add(WildcardHelpers.CalculateNetworkWildcard(network, networkBits));
+                        break;
+
+                    case WildcardMethod.Class:
+                        AccessControlEntries.Add(WildcardHelpers.CalculateClassWildcard(_networkClass));
+                        break;
                 }
             });
         }
@@ -141,6 +170,17 @@ namespace NetKit.ViewModels
         Greater,
         Smaller,
         Even,
-        Odd
+        Odd,
+        Network,
+        Class
+    }
+
+    public enum NetworkClass
+    {
+        A,
+        B,
+        C,
+        D,
+        E
     }
 }

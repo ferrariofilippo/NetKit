@@ -16,6 +16,7 @@ namespace NetKit.Views
             InitializeComponent();
             BindingContext = _viewModel;
             MethodPicker.ItemsSource = _viewModel.WildcardMethods;
+            ClassPicker.ItemsSource = _viewModel.ClassNames;
             ACEListView.ItemsSource = _viewModel.AccessControlEntries;
         }
 
@@ -34,7 +35,22 @@ namespace NetKit.Views
             _viewModel.MethodName = _viewModel.WildcardMethods[MethodPicker.SelectedIndex];
         }
 
-        private async void SubmitButton_Clicked(object sender, EventArgs e)
+		private void ClassEntry_Focused(object sender, FocusEventArgs e)
+		{
+            ClassPicker.Focus();
+		}
+		private void ClassPicker_Unfocused(object sender, FocusEventArgs e)
+		{
+            ClassEntry.Unfocus();
+		}
+		private void ClassPicker_SelectedIndexChanged(object sender, EventArgs e)
+		{
+            ClassEntry.Unfocus();
+            _viewModel.NetworkClass = (NetworkClass)ClassPicker.SelectedIndex;
+            _viewModel.ClassName = _viewModel.ClassNames[ClassPicker.SelectedIndex];
+		}
+
+		private async void SubmitButton_Clicked(object sender, EventArgs e)
         {
             var networkAddress = new byte[4];
             if (ValidateInput(networkAddress, out int networkBits))
@@ -44,6 +60,9 @@ namespace NetKit.Views
         private bool ValidateInput(byte[] address, out int networkBits)
         {
             networkBits = 0;
+            if (_viewModel.IsClass)
+                return true;
+
             var addressComponents = _viewModel.NetworkAddress.Split('/', '\\');
             if (addressComponents.Length != 2 || !int.TryParse(addressComponents[1], out networkBits) || networkBits > 30)
             {
@@ -75,5 +94,5 @@ namespace NetKit.Views
             }
             return true;
         }
-    }
+	}
 }

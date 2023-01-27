@@ -1,238 +1,289 @@
 ﻿using NetKit.Model;
+using NetKit.ViewModels;
 using System.Collections.Generic;
 
 namespace NetKit.Services
 {
-    public class WildcardHelpers
-    {
-        private const int ADDRESS_BITS_INDEXER = 31;    // Starts from 0 (32 bits)
-        private const int BITS_PER_BYTE = 8;
-        private const int BYTES_PER_ADDRESS = 4;
-        private const int ADDRESS_BITS = 32;
+	public class WildcardHelpers
+	{
+		private const int ADDRESS_BITS_INDEXER = 31;    // Starts from 0 (32 bits)
+		private const int BITS_PER_BYTE = 8;
+		private const int BYTES_PER_ADDRESS = 4;
+		private const int ADDRESS_BITS = 32;
 
-        private static readonly byte[] evenOddWildcardMask = new byte[4] { 0xFF, 0xFF, 0xFF, 0xFE };
+		private static readonly byte[] evenOddWildcardMask = new byte[BYTES_PER_ADDRESS] { 0xFF, 0xFF, 0xFF, 0xFE };
 
-        public static ACE CalculateEvenOrOddWildcard(bool isEven, byte[] networkAddress, int networkBits)
-        {
-            var mask = GetNetworkWildcard(networkBits);
-            mask[0] &= evenOddWildcardMask[0];
-            mask[1] &= evenOddWildcardMask[1];
-            mask[2] &= evenOddWildcardMask[2];
-            mask[3] &= evenOddWildcardMask[3];
+		private static readonly byte[] classAWildcardMask = new byte[BYTES_PER_ADDRESS] { 0x7F, 0xFF, 0xFF, 0xFF };
+		private static readonly byte[] classBWildcardMask = new byte[BYTES_PER_ADDRESS] { 0x3F, 0xFF, 0xFF, 0xFF };
+		private static readonly byte[] classCWildcardMask = new byte[BYTES_PER_ADDRESS] { 0x3F, 0xFF, 0xFF, 0xFF };
+		private static readonly byte[] classDWildcardMask = new byte[BYTES_PER_ADDRESS] { 0x1F, 0xFF, 0xFF, 0xFF }; 
+		private static readonly byte[] classEWildcardMask = new byte[BYTES_PER_ADDRESS] { 0x0F, 0xFF, 0xFF, 0xFF };
 
-            if (isEven)
-                networkAddress[networkBits / BITS_PER_BYTE] &= 0xFE;
-            else
-                networkAddress[networkBits / BITS_PER_BYTE] |= 1;
+		private static readonly byte[] classAIpSupport = new byte[BYTES_PER_ADDRESS] { 0x00, 0x00, 0x00, 0x00 };
+		private static readonly byte[] classBIpSupport = new byte[BYTES_PER_ADDRESS] { 0x80, 0x00, 0x00, 0x00 };
+		private static readonly byte[] classCIpSupport = new byte[BYTES_PER_ADDRESS] { 0xC0, 0x00, 0x00, 0x00 };
+		private static readonly byte[] classDIpSupport = new byte[BYTES_PER_ADDRESS] { 0xE0, 0x00, 0x00, 0x00 };
+		private static readonly byte[] classEIpSupport = new byte[BYTES_PER_ADDRESS] { 0xF0, 0x00, 0x00, 0x00 };
 
-            return new ACE
-            {
-                SupportAddress = $"{networkAddress[0]}.{networkAddress[1]}.{networkAddress[2]}.{networkAddress[3]}",
-                WildcardMask = $"{mask[0]}.{mask[1]}.{mask[2]}.{mask[3]}"
-            };
-        }
+		public static ACE CalculateEvenOrOddWildcard(bool isEven, byte[] networkAddress, int networkBits)
+		{
+			var mask = GetNetworkWildcard(networkBits);
+			mask[0] &= evenOddWildcardMask[0];
+			mask[1] &= evenOddWildcardMask[1];
+			mask[2] &= evenOddWildcardMask[2];
+			mask[3] &= evenOddWildcardMask[3];
 
-        public static List<ACE> CalculateGreaterThanWildcardMask(byte[] networkAddress, uint lowerBound, int networkBits)
-        {
-            var exponent = MathHelpers.GetExcessBase2Log(lowerBound);
-            if (exponent <= 0)
-                return new List<ACE>();
+			if (isEven)
+				networkAddress[networkBits / BITS_PER_BYTE] &= 0xFE;
+			else
+				networkAddress[networkBits / BITS_PER_BYTE] |= 1;
 
-            var upperBound = MathHelpers.PowersOfTwo[exponent];
-            var approximatedLowerBound = lowerBound + (lowerBound % 2);
-            var byteIndex = 3 - (exponent / BITS_PER_BYTE);
-            var roundedExponent = exponent - (exponent % BITS_PER_BYTE);     // This way we get only 0, 8, 16, 24
+			return CreateACE(networkAddress, mask);
+		}
 
-            var wildcard = GetNetworkWildcard(networkBits);
-            var aces = new List<ACE>()
-            {
-                GetBiggestEntry(exponent, wildcard, networkAddress)
-            };
+		public static ACE CalculateNetworkWildcard(byte[] networkAddress, int networkBits)
+		{
+			var mask = GetNetworkWildcard(networkBits);
+			networkAddress[0] &= (byte)(~(mask[0]));
+			networkAddress[1] &= (byte)(~(mask[1]));
+			networkAddress[2] &= (byte)(~(mask[2]));
+			networkAddress[3] &= (byte)(~(mask[3]));
 
-            while (upperBound > approximatedLowerBound)
-                aces.Add(GetGreaterThanEntry(networkAddress, wildcard, lowerBound, ref upperBound, exponent));
+			return CreateACE(networkAddress, mask);
+		}
 
-            wildcard[byteIndex] = 0;
-            while (--upperBound >= lowerBound)
-            {
-                networkAddress[byteIndex] = (byte)(upperBound >> roundedExponent);
-                aces.Add(CreateACE(networkAddress, wildcard));
-            }
+		public static ACE CalculateClassWildcard(NetworkClass network)
+		{
+			byte[] networkAddress;
+			byte[] wildcard;
+			switch (network)
+			{
+				case NetworkClass.A:
+					wildcard = classAWildcardMask;
+					networkAddress = classAIpSupport;
+					break;
+				case NetworkClass.B:
+					wildcard = classBWildcardMask;
+					networkAddress = classBIpSupport;
+					break;
+				case NetworkClass.C:
+					wildcard = classCWildcardMask;
+					networkAddress = classCIpSupport;
+					break;
+				case NetworkClass.D:
+					wildcard = classDWildcardMask;
+					networkAddress = classDIpSupport;
+					break;
+				default:
+					wildcard = classEWildcardMask;
+					networkAddress = classEIpSupport;
+					break;
+			}
+			return CreateACE(networkAddress, wildcard);
+		}
 
-            return aces;
-        }
+		public static List<ACE> CalculateGreaterThanWildcardMask(byte[] networkAddress, uint lowerBound, int networkBits)
+		{
+			var exponent = MathHelpers.GetExcessBase2Log(lowerBound);
+			if (exponent <= 0)
+				return new List<ACE>();
 
-        public static List<ACE> CalculateSmallerThanWildcardMask(byte[] networkAddress, uint upperBound, int networkBits)
-        {
-            var exponent = MathHelpers.GetDefectBase2Log(upperBound);
-            if (exponent <= 0)
-                return new List<ACE>();
+			var upperBound = MathHelpers.PowersOfTwo[exponent];
+			var approximatedLowerBound = lowerBound + (lowerBound % 2);
+			var byteIndex = 3 - (exponent / BITS_PER_BYTE);
+			var roundedExponent = exponent - (exponent % BITS_PER_BYTE);     // This way we get only 0, 8, 16, 24
 
-            var lowerBound = MathHelpers.PowersOfTwo[exponent];
-            var approximatedUpperBound = upperBound - (upperBound % 2);
-            var byteIndex = 3 - exponent / BITS_PER_BYTE;
-            var roundedExponent = exponent - (exponent % BITS_PER_BYTE);     // This way we get only 0, 8, 16, 24
+			var wildcard = GetNetworkWildcard(networkBits);
+			var aces = new List<ACE>()
+			{
+				GetBiggestEntry(exponent, wildcard, networkAddress)
+			};
 
-            var wildcard = GetNetworkWildcard(networkBits);
-            var aces = new List<ACE>()
-            {
-                GetBiggestEntryForSmaller(exponent, wildcard, networkAddress)
-            };
+			while (upperBound > approximatedLowerBound)
+				aces.Add(GetGreaterThanEntry(networkAddress, wildcard, lowerBound, ref upperBound, exponent));
 
-            while (lowerBound < approximatedUpperBound)
-                aces.Add(GetSmallerThanEntry(networkAddress, wildcard, upperBound, ref lowerBound, exponent));
+			wildcard[byteIndex] = 0;
+			while (--upperBound >= lowerBound)
+			{
+				networkAddress[byteIndex] = (byte)(upperBound >> roundedExponent);
+				aces.Add(CreateACE(networkAddress, wildcard));
+			}
 
-            wildcard[byteIndex] = 0;
-            while (++lowerBound <= upperBound)
-            {
-                networkAddress[byteIndex] = (byte)(lowerBound >> roundedExponent);
-                aces.Add(CreateACE(networkAddress, wildcard));
-            }
+			return aces;
+		}
 
-            return aces;
-        }
+		public static List<ACE> CalculateSmallerThanWildcardMask(byte[] networkAddress, uint upperBound, int networkBits)
+		{
+			var exponent = MathHelpers.GetDefectBase2Log(upperBound);
+			if (exponent <= 0)
+				return new List<ACE>();
 
-        public static List<ACE> CalculateRangeWildcardMask(byte[] networkAddress, uint lowerBound, uint upperBound, int networkBits)
-        {
-            var aces = new List<ACE>();
-            if (lowerBound == upperBound)
-            {
-                int byteIndex = networkBits / BITS_PER_BYTE;
-                networkAddress[byteIndex] = (byte)(lowerBound >> (byteIndex * BITS_PER_BYTE));
-                aces.Add(CreateACE(
-                    networkAddress,
-                    new byte[BYTES_PER_ADDRESS] { 0, 0, 0, 0 }));
-                return aces;
-            }
+			var lowerBound = MathHelpers.PowersOfTwo[exponent];
+			var approximatedUpperBound = upperBound - (upperBound % 2);
+			var byteIndex = 3 - exponent / BITS_PER_BYTE;
+			var roundedExponent = exponent - (exponent % BITS_PER_BYTE);     // This way we get only 0, 8, 16, 24
 
-            var wildcard = GetNetworkWildcard(networkBits);
-            var lowerExponent = MathHelpers.GetExcessBase2Log(lowerBound);
-            var upperExponent = MathHelpers.GetDefectBase2Log(upperBound);
+			var wildcard = GetNetworkWildcard(networkBits);
+			var aces = new List<ACE>()
+			{
+				GetBiggestEntryForSmaller(exponent, wildcard, networkAddress)
+			};
 
-            var medianPowerOfTwo = MathHelpers.PowersOfTwo[lowerExponent];
-            if (upperExponent > lowerExponent + 1)
-            {
-                while (upperBound > medianPowerOfTwo)
-                    aces.Add(GetGreaterThanEntry(networkAddress, wildcard, medianPowerOfTwo, ref upperBound, upperExponent));
-                while (lowerBound < medianPowerOfTwo)
-                    aces.Add(GetSmallerThanEntry(networkAddress, wildcard, medianPowerOfTwo, ref lowerBound, lowerExponent));
-            }
-            else
-            {
-                // TODO: Optimize this (It works but it doesn't merge ACEs when it could)
-                while (lowerBound < upperBound)
-                    aces.Add(GetSmallerThanEntry(networkAddress, wildcard, upperBound, ref lowerBound, lowerExponent));
-            }
+			while (lowerBound < approximatedUpperBound)
+				aces.Add(GetSmallerThanEntry(networkAddress, wildcard, upperBound, ref lowerBound, exponent));
 
-            return aces;
-        }
+			wildcard[byteIndex] = 0;
+			while (++lowerBound <= upperBound)
+			{
+				networkAddress[byteIndex] = (byte)(lowerBound >> roundedExponent);
+				aces.Add(CreateACE(networkAddress, wildcard));
+			}
 
-        private static byte[] GetNetworkWildcard(int networkBits)
-        {
-            var mask = 0u;
-            for (int i = 0; i < ADDRESS_BITS; i++)
-            {
-                if (i >= networkBits)
-                    mask++;
-                if (i != ADDRESS_BITS_INDEXER)
-                    mask <<= 1;
-            }
+			return aces;
+		}
 
-            return new byte[BYTES_PER_ADDRESS]
-            {
-                (byte)(mask >> 24),
-                (byte)(mask >> 16 & 0x00FF),
-                (byte)(mask >> 8 & 0x0000FF),
-                (byte)(mask & 0x000000FF)
-            };
-        }
+		public static List<ACE> CalculateRangeWildcardMask(byte[] networkAddress, uint lowerBound, uint upperBound, int networkBits)
+		{
+			var aces = new List<ACE>();
+			if (lowerBound == upperBound)
+			{
+				int byteIndex = networkBits / BITS_PER_BYTE;
+				networkAddress[byteIndex] = (byte)(lowerBound >> (byteIndex * BITS_PER_BYTE));
+				aces.Add(CreateACE(
+					networkAddress,
+					new byte[BYTES_PER_ADDRESS] { 0, 0, 0, 0 }));
+				return aces;
+			}
 
-        private static ACE GetBiggestEntry(int exponent, byte[] mask, byte[] networkAddress)
-        {
-            var byteIndex = 3 - exponent / BITS_PER_BYTE;
-            var bitIndex = exponent % BITS_PER_BYTE;
-            var tempMask = new byte[BYTES_PER_ADDRESS] { mask[0], mask[1], mask[2], mask[3] };
+			var wildcard = GetNetworkWildcard(networkBits);
+			var lowerExponent = MathHelpers.GetExcessBase2Log(lowerBound);
+			var upperExponent = MathHelpers.GetDefectBase2Log(upperBound);
 
-            tempMask[byteIndex] &= (byte)(~MathHelpers.PowersOfTwo[bitIndex]);
-            networkAddress[byteIndex] = (byte)MathHelpers.PowersOfTwo[bitIndex];
+			var medianPowerOfTwo = MathHelpers.PowersOfTwo[lowerExponent];
+			if (upperExponent > lowerExponent + 1)
+			{
+				while (upperBound > medianPowerOfTwo)
+					aces.Add(GetGreaterThanEntry(networkAddress, wildcard, medianPowerOfTwo, ref upperBound, upperExponent));
+				while (lowerBound < medianPowerOfTwo)
+					aces.Add(GetSmallerThanEntry(networkAddress, wildcard, medianPowerOfTwo, ref lowerBound, lowerExponent));
+			}
+			else
+			{
+				// TODO: Optimize this (It works but it doesn't merge ACEs when it could)
+				lowerExponent++;
+				while (lowerBound < upperBound)
+					aces.Add(GetSmallerThanEntry(networkAddress, wildcard, upperBound, ref lowerBound, lowerExponent));
+			}
 
-            return CreateACE(networkAddress, tempMask);
-        }
+			return aces;
+		}
 
-        private static ACE GetBiggestEntryForSmaller(int exponent, byte[] mask, byte[] networkAddress)
-        {
-            var byteIndex = 3 - exponent / BITS_PER_BYTE;
-            var bitIndex = exponent % BITS_PER_BYTE;
-            var tempMask = new byte[BYTES_PER_ADDRESS] { mask[0], mask[1], mask[2], mask[3] };
+		private static byte[] GetNetworkWildcard(int networkBits)
+		{
+			var mask = 0u;
+			for (int i = 0; i < ADDRESS_BITS; i++)
+			{
+				if (i >= networkBits)
+					mask++;
+				if (i != ADDRESS_BITS_INDEXER)
+					mask <<= 1;
+			}
 
-            tempMask[byteIndex] &= (byte)(0xFF >> (BITS_PER_BYTE - bitIndex));
-            networkAddress[byteIndex] = 0;
+			return new byte[BYTES_PER_ADDRESS]
+			{
+				(byte)(mask >> 24),
+				(byte)(mask >> 16 & 0x00FF),
+				(byte)(mask >> 8 & 0x0000FF),
+				(byte)(mask & 0x000000FF)
+			};
+		}
 
-            return CreateACE(networkAddress, tempMask);
-        }
+		private static ACE GetBiggestEntry(int exponent, byte[] mask, byte[] networkAddress)
+		{
+			var byteIndex = 3 - exponent / BITS_PER_BYTE;
+			var bitIndex = exponent % BITS_PER_BYTE;
+			var tempMask = new byte[BYTES_PER_ADDRESS] { mask[0], mask[1], mask[2], mask[3] };
 
-        private static ACE GetGreaterThanEntry(byte[] networkAddress, byte[] mask, uint lowerBound, ref uint upperBound, int exponent)
-        {
-            var byteIndex = 3 - exponent / BITS_PER_BYTE;
-            var approxExponent = exponent - (exponent % BITS_PER_BYTE);   // This way we get only 0, 8, 16, 24
-            var addressesSum = 0u;
-            var settedBits = 0u;
-            for (int i = ADDRESS_BITS_INDEXER; i >= exponent; i--)
-                settedBits += MathHelpers.PowersOfTwo[i];
-            exponent--;
+			tempMask[byteIndex] &= (byte)(~MathHelpers.PowersOfTwo[bitIndex]);
+			networkAddress[byteIndex] = (byte)MathHelpers.PowersOfTwo[bitIndex];
 
-            while (addressesSum < lowerBound && exponent >= 0)
-            {
-                addressesSum += MathHelpers.PowersOfTwo[exponent];
-                settedBits += MathHelpers.PowersOfTwo[exponent];
-                if (addressesSum >= upperBound)
-                    addressesSum -= MathHelpers.PowersOfTwo[exponent];
-                exponent--;
-            }
+			return CreateACE(networkAddress, tempMask);
+		}
 
-            var tempMask = new byte[BYTES_PER_ADDRESS] { mask[0], mask[1], mask[2], mask[3] };
-            var unsetBits = (byte)(~settedBits >> approxExponent);
+		private static ACE GetBiggestEntryForSmaller(int exponent, byte[] mask, byte[] networkAddress)
+		{
+			var byteIndex = 3 - exponent / BITS_PER_BYTE;
+			var bitIndex = exponent % BITS_PER_BYTE;
+			var tempMask = new byte[BYTES_PER_ADDRESS] { mask[0], mask[1], mask[2], mask[3] };
 
-            tempMask[byteIndex] &= unsetBits;
-            networkAddress[byteIndex] = (byte)(addressesSum >> approxExponent);
-            upperBound = addressesSum;
+			tempMask[byteIndex] &= (byte)(0xFF >> (BITS_PER_BYTE - bitIndex));
+			networkAddress[byteIndex] = 0;
 
-            return CreateACE(networkAddress, tempMask);
-        }
+			return CreateACE(networkAddress, tempMask);
+		}
 
-        private static ACE GetSmallerThanEntry(byte[] networkAddress, byte[] mask, uint upperBound, ref uint lowerBound, int exponent)
-        {
-            var byteIndex = 3 - exponent / BITS_PER_BYTE;
-            var approxExponent = exponent - (exponent % BITS_PER_BYTE);   // This way we get only 0, 8, 16, 24
-            var addressesSum = lowerBound;
-            var settedBits = 0u;
-            exponent--;
-            for (int i = ADDRESS_BITS_INDEXER; i >= exponent; i--)
-                settedBits += MathHelpers.PowersOfTwo[i];
+		private static ACE GetGreaterThanEntry(byte[] networkAddress, byte[] mask, uint lowerBound, ref uint upperBound, int exponent)
+		{
+			var byteIndex = 3 - exponent / BITS_PER_BYTE;
+			var approxExponent = exponent - (exponent % BITS_PER_BYTE);   // This way we get only 0, 8, 16, 24
+			var addressesSum = 0u;
+			var settedBits = 0u;
+			for (int i = ADDRESS_BITS_INDEXER; i >= exponent; i--)
+				settedBits += MathHelpers.PowersOfTwo[i];
+			exponent--;
 
-            while (exponent >= 0 && (addressesSum + MathHelpers.PowersOfTwo[exponent]) > upperBound)
-            {
-                exponent--;
-                settedBits += MathHelpers.PowersOfTwo[exponent];
-            }
+			while (addressesSum < lowerBound && exponent >= 0)
+			{
+				addressesSum += MathHelpers.PowersOfTwo[exponent];
+				settedBits += MathHelpers.PowersOfTwo[exponent];
+				if (addressesSum >= upperBound)
+					addressesSum -= MathHelpers.PowersOfTwo[exponent];
+				exponent--;
+			}
 
-            var tempMask = new byte[BYTES_PER_ADDRESS] { mask[0], mask[1], mask[2], mask[3] };
-            var unsetBits = (byte)(~settedBits >> approxExponent);
+			var tempMask = new byte[BYTES_PER_ADDRESS] { mask[0], mask[1], mask[2], mask[3] };
+			var unsetBits = (byte)(~settedBits >> approxExponent);
 
-            tempMask[byteIndex] &= unsetBits;
-            networkAddress[byteIndex] = (byte)(addressesSum >> approxExponent);
-            lowerBound = addressesSum + MathHelpers.PowersOfTwo[exponent];
+			tempMask[byteIndex] &= unsetBits;
+			networkAddress[byteIndex] = (byte)(addressesSum >> approxExponent);
+			upperBound = addressesSum;
 
-            return CreateACE(networkAddress, tempMask);
-        }
+			return CreateACE(networkAddress, tempMask);
+		}
 
-        private static ACE CreateACE(byte[] networkAddress, byte[] wildcard)
-        {
-            return new ACE
-            {
-                SupportAddress = $"{networkAddress[0]}.{networkAddress[1]}.{networkAddress[2]}.{networkAddress[3]}",
-                WildcardMask = $"{wildcard[0]}.{wildcard[1]}.{wildcard[2]}.{wildcard[3]}"
-            };
-        }
-    }
+		private static ACE GetSmallerThanEntry(byte[] networkAddress, byte[] mask, uint upperBound, ref uint lowerBound, int exponent)
+		{
+			var byteIndex = 3 - exponent / BITS_PER_BYTE;
+			var approxExponent = exponent - (exponent % BITS_PER_BYTE);   // This way we get only 0, 8, 16, 24
+			var addressesSum = lowerBound;
+			var settedBits = 0u;
+			exponent--;
+			for (int i = ADDRESS_BITS_INDEXER; i >= exponent; i--)
+				settedBits += MathHelpers.PowersOfTwo[i];
+
+			while (exponent >= 0 && (addressesSum + MathHelpers.PowersOfTwo[exponent]) > upperBound)
+			{
+				exponent--;
+				settedBits += MathHelpers.PowersOfTwo[exponent];
+			}
+
+			var tempMask = new byte[BYTES_PER_ADDRESS] { mask[0], mask[1], mask[2], mask[3] };
+			var unsetBits = (byte)(~settedBits >> approxExponent);
+
+			tempMask[byteIndex] &= unsetBits;
+			networkAddress[byteIndex] = (byte)(addressesSum >> approxExponent);
+			lowerBound = addressesSum + MathHelpers.PowersOfTwo[exponent];
+
+			return CreateACE(networkAddress, tempMask);
+		}
+
+		private static ACE CreateACE(byte[] networkAddress, byte[] wildcard)
+		{
+			return new ACE
+			{
+				SupportAddress = $"{networkAddress[0]}.{networkAddress[1]}.{networkAddress[2]}.{networkAddress[3]}",
+				WildcardMask = $"{wildcard[0]}.{wildcard[1]}.{wildcard[2]}.{wildcard[3]}"
+			};
+		}
+	}
 }
