@@ -1,32 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="NetKit.Views.GetNetworkPage"
-             BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}"
-			 BindingContext="NetKit.ViewModels.GetNetworkViewModel"
-             Title="IPv4 - Get Network"
-			 Visual="Material">
-	
+<ContentPage
+	x:Class="NetKit.Views.GetNetworkPage"
+	xmlns="http://xamarin.com/schemas/2014/forms"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	Title="IPv4 - Get Network"
+	BackgroundColor="{AppThemeBinding Light=White,
+									  Dark=#424242}"
+	BindingContext="NetKit.ViewModels.GetNetworkViewModel"
+	Visual="Material">
+
 	<ContentPage.Content>
-		<StackLayout 
-            Padding="30, 30, 30, 30" 
-            Spacing="12">
-			<Entry
-                Placeholder="Host Address:"
-                Text="{Binding HostNumber}" />
-			
-			<Entry
-                Placeholder="Subnet Mask or Prefix Length:"
-                Text="{Binding SubnetMask}" />
-			
+		<StackLayout Padding="30,30,30,30" Spacing="12">
+			<Entry Placeholder="Host Address:" Text="{Binding HostNumber}" />
+
+			<Entry Placeholder="Subnet Mask or Prefix Length:" Text="{Binding SubnetMask}" />
+
 			<Button
-                Clicked="Submit"
-                CornerRadius="25"
-                Text="Submit"
-                x:Name="getNetworkButton" />
-			
-			<Line/>
-			
+				x:Name="getNetworkButton"
+				Clicked="Submit"
+				CornerRadius="25"
+				Text="Submit" />
+
+			<Line />
+
 			<Label Text="{Binding NetworkAddress}" />
 		</StackLayout>
 	</ContentPage.Content>

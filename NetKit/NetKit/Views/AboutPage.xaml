@@ -1,34 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="NetKit.Views.AboutPage"
-             BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}"
-			 BindingContext="NetKit.ViewModels.AboutViewModel"
-             Title="About"
-			 Visual="Material">
+<ContentPage
+	x:Class="NetKit.Views.AboutPage"
+	xmlns="http://xamarin.com/schemas/2014/forms"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	Title="About"
+	BackgroundColor="{AppThemeBinding Light=White,
+									  Dark=#424242}"
+	BindingContext="NetKit.ViewModels.AboutViewModel"
+	Visual="Material">
 
 	<ContentPage.Content>
 		<StackLayout Padding="30">
 			<Label Text="{Binding Description}" />
-			
+
 			<Label
-                FontAttributes="Bold"
-                FontSize="Title"
-                Padding="0, 30, 0, 0"
-                Text="Credits"
-                TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Light}}" />
-			
+				Padding="0,30,0,0"
+				FontAttributes="Bold"
+				FontSize="Title"
+				Text="Credits"
+				TextColor="{AppThemeBinding Light={StaticResource Primary},
+											Dark={StaticResource Light}}" />
+
 			<Label>
 				<Label.FormattedText>
 					<FormattedString>
 						<Span Text="Icons: " />
-						
+
 						<Span
-                            Text="https://icons8.com"
-                            TextColor="{AppThemeBinding Light=Blue, Dark=LightBlue}"
-                            TextDecorations="Underline">
+							Text="https://icons8.com"
+							TextColor="{AppThemeBinding Light=Blue,
+														Dark=LightBlue}"
+							TextDecorations="Underline">
 							<Span.GestureRecognizers>
-								<TapGestureRecognizer Tapped="LinkTapped"/>
+								<TapGestureRecognizer Tapped="LinkTapped" />
 							</Span.GestureRecognizers>
 						</Span>
 					</FormattedString>
@@ -37,4 +41,3 @@
 		</StackLayout>
 	</ContentPage.Content>
 </ContentPage>
-	

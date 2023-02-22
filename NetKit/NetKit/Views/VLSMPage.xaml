@@ -1,22 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="NetKit.Views.VLSMPage"
-             BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}"
-             Title="IPv4 - VLSM"
-			 Visual="Material">
-	
+<ContentPage
+	x:Class="NetKit.Views.VLSMPage"
+	xmlns="http://xamarin.com/schemas/2014/forms"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	Title="IPv4 - VLSM"
+	BackgroundColor="{AppThemeBinding Light=White,
+									  Dark=#424242}"
+	Visual="Material">
+
 	<ContentPage.Content>
-		<ScrollView
-			Padding="40, 20, 40, 40"
-			VerticalOptions="Start">
+		<ScrollView Padding="40,20,40,40" VerticalOptions="Start">
 			<StackLayout Spacing="20">
 				<StackLayout VerticalOptions="Start">
 					<ListView
-						ItemsSource="{Binding AddedItems}"
 						HeightRequest="{Binding InputListViewHeight}"
-                        RowHeight="{Binding InputLineHeight}"
-                        SeparatorVisibility="None">
+						ItemsSource="{Binding AddedItems}"
+						RowHeight="{Binding InputLineHeight}"
+						SeparatorVisibility="None">
 						<ListView.ItemTemplate>
 							<DataTemplate>
 								<ViewCell>
@@ -36,30 +36,32 @@
 						</Grid.ColumnDefinitions>
 
 						<ImageButton
-                            Grid.Column="0"
-                            BackgroundColor="Transparent"
-							Clicked="Add_Clicked" 
-                            HeightRequest="30"
-                            HorizontalOptions="Center"
-                            Source="{AppThemeBinding Light=Add.png, Dark=WhiteAdd.png}" />
+							Grid.Column="0"
+							BackgroundColor="Transparent"
+							Clicked="Add_Clicked"
+							HeightRequest="30"
+							HorizontalOptions="Center"
+							Source="{AppThemeBinding Light=Add.png,
+													 Dark=WhiteAdd.png}" />
 
 						<ImageButton
-                            Grid.Column="1"
-    						BackgroundColor="Transparent"
+							Grid.Column="1"
+							BackgroundColor="Transparent"
 							Clicked="Delete_Clicked"
-                            HeightRequest="30"
-                            HorizontalOptions="Center"
-							Source="{AppThemeBinding Light=Delete.png, Dark=WhiteDelete.png}" />
+							HeightRequest="30"
+							HorizontalOptions="Center"
+							Source="{AppThemeBinding Light=Delete.png,
+													 Dark=WhiteDelete.png}" />
 					</Grid>
 				</StackLayout>
 
 				<Button
+					x:Name="vlsmButton"
 					Clicked="GetResults_Clicked"
-                    CornerRadius="25"
-                    FontAttributes="Bold"
-                    FontSize="Subtitle"
-                    Text="Submit"
-                    x:Name="vlsmButton" />
+					CornerRadius="25"
+					FontAttributes="Bold"
+					FontSize="Subtitle"
+					Text="Submit" />
 
 				<Line />
 
@@ -68,16 +70,16 @@
 					ItemsSource="{Binding Networks}"
 					RowHeight="150"
 					SelectionMode="None"
-                    SeparatorColor="#a39a38">
+					SeparatorColor="#a39a38">
 					<ListView.ItemTemplate>
 						<DataTemplate>
 							<ViewCell>
-								<Grid Margin="0, 25, 0, 15">
+								<Grid Margin="0,25,0,15">
 									<Grid.ColumnDefinitions>
 										<ColumnDefinition Width="Auto" />
 										<ColumnDefinition />
 									</Grid.ColumnDefinitions>
-									
+
 									<Grid.RowDefinitions>
 										<RowDefinition />
 										<RowDefinition />
@@ -86,52 +88,52 @@
 									</Grid.RowDefinitions>
 
 									<Label
-                                        Grid.Column="0"
-									    Grid.Row="0"
+										Grid.Row="0"
+										Grid.Column="0"
 										FontAttributes="Bold"
-                                        Text="Network: " />
-									
-									<Label 
-                                        Grid.Column="1"
-                                        Grid.Row="0"
-                                        HorizontalOptions="CenterAndExpand"
-                                        Text="{Binding NetworkAddress}" />
+										Text="Network: " />
 
 									<Label
-                                        Grid.Column="0"
-                                        Grid.Row="1"
-                                        FontAttributes="Bold"
-                                        Text="Broadcast: " />
-									
-									<Label
-                                        Grid.Row="1"
-                                        Grid.Column="1"
-                                        HorizontalOptions="CenterAndExpand"
-                                        Text="{Binding BroadcastAddress}" />
+										Grid.Row="0"
+										Grid.Column="1"
+										HorizontalOptions="CenterAndExpand"
+										Text="{Binding NetworkAddress}" />
 
 									<Label
-                                        Grid.Column="0"
-                                        Grid.Row="2"
-                                        FontAttributes="Bold"
-                                        Text="Subnet Mask: " />
-									
-									<Label
-                                        Grid.Column="1"
-                                        Grid.Row="2"
-                                        HorizontalOptions="CenterAndExpand"
-                                        Text="{Binding SubnetMask}" />
+										Grid.Row="1"
+										Grid.Column="0"
+										FontAttributes="Bold"
+										Text="Broadcast: " />
 
 									<Label
-                                        Grid.Column="0"
-                                        Grid.Row="3"
-                                        FontAttributes="Bold"
-                                        Text="Numero Host: " />
-									
+										Grid.Row="1"
+										Grid.Column="1"
+										HorizontalOptions="CenterAndExpand"
+										Text="{Binding BroadcastAddress}" />
+
 									<Label
-                                        Grid.Column="1"
-                                        Grid.Row="3"
-                                        HorizontalOptions="CenterAndExpand"
-                                        Text="{Binding HostNumber}" />
+										Grid.Row="2"
+										Grid.Column="0"
+										FontAttributes="Bold"
+										Text="Subnet Mask: " />
+
+									<Label
+										Grid.Row="2"
+										Grid.Column="1"
+										HorizontalOptions="CenterAndExpand"
+										Text="{Binding SubnetMask}" />
+
+									<Label
+										Grid.Row="3"
+										Grid.Column="0"
+										FontAttributes="Bold"
+										Text="Numero Host: " />
+
+									<Label
+										Grid.Row="3"
+										Grid.Column="1"
+										HorizontalOptions="CenterAndExpand"
+										Text="{Binding HostNumber}" />
 								</Grid>
 							</ViewCell>
 						</DataTemplate>
@@ -141,4 +143,3 @@
 		</ScrollView>
 	</ContentPage.Content>
 </ContentPage>
-	

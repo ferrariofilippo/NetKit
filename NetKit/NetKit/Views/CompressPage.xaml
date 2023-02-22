@@ -1,31 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="NetKit.Views.CompressPage"
-             BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}"
-			 BindingContext="NetKit.ViewModels.CompressViewModel"
-             Title="IPv6 - Compress"
-			 Visual="Material">
+<ContentPage
+	x:Class="NetKit.Views.CompressPage"
+	xmlns="http://xamarin.com/schemas/2014/forms"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	Title="IPv6 - Compress"
+	BackgroundColor="{AppThemeBinding Light=White,
+									  Dark=#424242}"
+	BindingContext="NetKit.ViewModels.CompressViewModel"
+	Visual="Material">
 
 	<ContentPage.Content>
-		<StackLayout
-            Padding="40, 20, 40, 20"
-            Spacing="12">
-			<Entry
-                Placeholder="Enter IP: "
-                Text="{Binding IpAddress}" />
-			
+		<StackLayout Padding="40,20,40,20" Spacing="12">
+			<Entry Placeholder="Enter IP: " Text="{Binding IpAddress}" />
+
 			<Button
-                Clicked="CompressClicked"
-                Text="Compress"
-                x:Name="compressButton" />
-			
+				x:Name="compressButton"
+				Clicked="CompressClicked"
+				Text="Compress" />
+
 			<Label
-                FontSize="Large"
-                HorizontalOptions="Center"
-                Padding="0, 20, 0, 0"
-                Text="{Binding OutputAddress}" />
+				Padding="0,20,0,0"
+				FontSize="Large"
+				HorizontalOptions="Center"
+				Text="{Binding OutputAddress}" />
 		</StackLayout>
 	</ContentPage.Content>
 </ContentPage>
-	

@@ -1,37 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="NetKit.Views.NthSubnetPage"
-             BackgroundColor="{AppThemeBinding Light=White, Dark=#424242}"
-			 BindingContext="NetKit.ViewModels.NthSubnetViewModel"
-             Title="IPv4 - Find Subnet"
-			 Visual="Material">
-	
+<ContentPage
+	x:Class="NetKit.Views.NthSubnetPage"
+	xmlns="http://xamarin.com/schemas/2014/forms"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	Title="IPv4 - Find Subnet"
+	BackgroundColor="{AppThemeBinding Light=White,
+									  Dark=#424242}"
+	BindingContext="NetKit.ViewModels.NthSubnetViewModel"
+	Visual="Material">
+
 	<ContentPage.Content>
-		<StackLayout
-			Padding="30, 30, 30, 30"
-            Spacing="12">
+		<StackLayout Padding="30,30,30,30" Spacing="12">
 			<Entry
 				MaxLength="15"
-                Placeholder="Subnet Mask:"
-                Text="{Binding SubnetMask}" />
-			
+				Placeholder="Subnet Mask:"
+				Text="{Binding SubnetMask}" />
+
 			<Entry
-                MaxLength="9"
-                Placeholder="Subnet Number:"
+				MaxLength="9"
+				Placeholder="Subnet Number:"
 				Text="{Binding SubnetNumber}" />
-			
+
 			<Button
-                Clicked="GetResults_Clicked"
-                CornerRadius="25"
-                Text="Submit"
-                x:Name="getResultsButton" />
-			
-			<Line/>
-			
-			<Label
-                Padding="0, 0, 0, 30"
-                Text="{Binding NetworkAddress}" />
+				x:Name="getResultsButton"
+				Clicked="GetResults_Clicked"
+				CornerRadius="25"
+				Text="Submit" />
+
+			<Line />
+
+			<Label Padding="0,0,0,30" Text="{Binding NetworkAddress}" />
 		</StackLayout>
 	</ContentPage.Content>
 </ContentPage>
