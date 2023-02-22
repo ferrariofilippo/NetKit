@@ -89,6 +89,7 @@
 				<ListView
 					x:Name="ACEListView"
 					Grid.Row="5"
+					HeightRequest="{Binding ListViewHeight}"
 					RowHeight="80"
 					SelectionMode="None"
 					SeparatorColor="#a39a38">

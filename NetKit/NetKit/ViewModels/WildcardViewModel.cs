@@ -105,6 +105,8 @@ namespace NetKit.ViewModels
 
         public bool IsClass => _wildcardMethod is WildcardMethod.Class;
 
+        public double ListViewHeight => AccessControlEntries.Count * 80;
+
         public ObservableCollection<ACE> AccessControlEntries = new ObservableCollection<ACE>();
 
         public readonly string[] WildcardMethods = Enum.GetNames(typeof(WildcardMethod));
@@ -160,6 +162,7 @@ namespace NetKit.ViewModels
                         AccessControlEntries.Add(WildcardHelpers.CalculateClassWildcard(_networkClass));
                         break;
                 }
+                OnPropertyChanged(nameof(ListViewHeight));
             });
         }
     }
