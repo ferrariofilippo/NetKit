@@ -9,6 +9,7 @@ If you want to install the app, you need to download the code and build it yours
 ## Functions ##
 
 - VSLM Calculator
+- Wildcard mask Calculator
 - Find N*th* subnet given it's mask
 - Given an host address, find which subnet it belongs to
 - IPv6 address compressor
